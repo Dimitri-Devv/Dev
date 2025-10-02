@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+
+        /*
+        Exo 1 :
+        Écrire une boucle for qui affiche uniquement les nombres pairs entre 0 et 10.
+        */
+       
+        for(let i=0; i<=10; i = i + 2){
+            console.log(i);
+        }
+
+
+ 
+/*
+        Exo 2 :
+        Écris une boucle qui calcule la somme de ce tableau:
+        */
+        let nombres = [5, 10, 15, 20];
+
+        let somme = 0;
+
+        for(let i = 0; i < nombres.length; i++){
+            somme += nombres[i];
+        }
+ 
+// Exo 3
+ 
+        // Avec une boucle écris un programme qui prend une chaîne et la renverse.
+        // Exemple : "bonjour" → "ruojnob"
+        let chaine = 'bonjour'
+
+        for(let i = chaine.length-1; i>=0; i--){
+
+            console.log(chaine[i]);
+        }
+
+        // console.log(chaine.split('').reverse().joint())
+ 
+// Exo 4
+ 
+        // Écris une boucle for qui trouve le plus grand nombre dans ce tableau :
+ 
+        let tab = [12, 45, 7, 89, 24, 67];
+
+        let plusgrand = tab[0];
+
+        for(let i = 1; i < tab.length; i++){
+            if(tab[i] > max){
+                plusgrand = tab[i];
+            }
+            console.log[i];
+        
+        }
+
+//Exo 5
+let prenoms = ["Alice","Bob", "Charlie", "Diane"];
+for(let nom of prenom){
+    console.log("bonjour" + nom);
+}
+
+
+// Exo 6 
+// Demandez un chiffre entre 0 et 10 à l'utilisateur. ( prompt)
+// Tant que l'utilsateur ne marque pas un chiffre entre 0 et 10, continuez à demander un chiffre
+// info sup : couper un script -->break
+
+
+let chiffre;
+ 
+        while (true) {
+            chiffre = parseInt(prompt("Entre un chiffre entre 0 et 10 :"));
+ 
+            // Vérifie si le chiffre est valide
+            if (chiffre >= 0 && chiffre <= 10) {
+                console.log("Bravo ! Tu as entré : " + chiffre);
+                break; // sort de la boucle
+            } else {
+                console.log("Mauvais chiffre, recommence !");
+            }
+        }
+    
+// Exo 7
+ 
+        // Exo , creer un variable aDeviner = 8
+        // Faire deviner le chiffre a l'utilisateur
+        // Si c'est bon, lui dire, si c'est pas bon lui dire trop haut ou trop bas et redemander
+ 
+        // Limiter le nombre d'essai a 3 essai
+        // Si au bout de 3 essai il n'a pas trouver, lui dire echec
+ 
+        let aDeviner = 8
+        let bon = "Trouvé !"
+        let haut = "Trop haut"
+        let bas = "Trop bas"
+        let nbEssaie = 3;
+        
+        
+        for(let i = 1; i <= nbEssaie; i++){
+
+        let chiffreDeviner = prompt('Entrer un chiffre');
+        if ( aDeviner == chiffreDeviner){
+            console.log(bon);
+            break;
+            
+        }else if (aDeviner < chiffreDeviner){
+            console.log(haut);
+        }else{
+            console.log(bas);
+        }
+    }
+    </script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        /*
+        Exercice : Mettre en place un sytème de recommandation pour une plateforme de streaming basé sur l'age de l'utilisateur
+ 
+        Pour les moins de 13 ans ==> Elémentaire
+        entre 13 et 18 ans ==> Avatar
+        Plus de 18 ans ==> Scream
+ 
+        Récupéré l'age de l'utilisateur, affiché la recommandation dans un console.log
+ 
+        */
+        // prompt --> fenetre pop up pour récupérer une saisie de l'utilisateur
+        let saisie = prompt
+        ('Entrez votre age');
+
+        console.log(saisie);
+
+        if(saisie<13){
+            Console.log('Elementaire');
+        }else if(saisie >= 13 && saisie <= 18){
+            Console.log('Avatar');
+        }else {
+            Console.log('Scream');
+        }
+    
+        //Partie 2 
+        // Faire marcher le script  avec ces 2 lignes actives
+
+        let year = 2025;
+
+        let saisie2 = prompt('Quel est votre année de naissance ?');
+
+        if((year - saisie2) < 13){
+            Console.log('Elementaire');
+        }else if((year - saisie2) > 13 && (year - saisie2) < 18){
+            Console.log('Avatar');
+        }else {
+            Console.log('Scream');
+        }
+        
+        /* 
+
+        Exo 2 : Systeme de réduction
+ 
+        Récupérer l'age de l'utilisateur
+        Récupérer le prix de la commande
+ 
+        Si l'utilisateur à plus de 60 ans --> Réduction de 5 euro
+        Si l'utilisateur à entre 20 et 30ans --> réduction de 5 euro
+ 
+        Si le prix de la commande dépasse les 20 euros --> Réduction de 2 euro
+ 
+        Les réductions doivent se cumuler
+        */
+
+        let age = prompt
+        ('Entrez votre age');
+        let prix = prompt
+        ('Entrez le prix de la commande');
+
+        if(prix >= 20){
+            prix =- 2
+            if (age> 60 || age> 20 && age <30){
+            prix =- 5;
+        }
+        }else{
+            if (age> 60 || age> 20 && age <30){
+            prix =- 5;}
+        }
+
+        console.log(prix);
+
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

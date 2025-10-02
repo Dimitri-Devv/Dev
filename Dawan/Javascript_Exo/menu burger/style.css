@@ -1,0 +1,103 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    overflow-x: hidden;
+    /* évite les scrolls horizontaux */
+}
+
+.contenu {
+    padding: 20px;
+    text-align: center;
+}
+
+button {
+    padding: 10px;
+    border-radius: 5%;
+    background-color: green;
+}
+
+header {
+    background: #333;
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 1000;
+}
+
+.logo {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* Navigation latérale */
+nav {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    /* caché au départ */
+    width: 250px;
+    height: 100vh;
+    background: #222;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 80px 20px;
+    transition: left 0.3s ease;
+    z-index: 1100;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    transition: 0.3s;
+}
+
+nav a:hover {
+    color: #f39c12;
+}
+
+/* Quand le menu est actif */
+nav.active {
+    left: 0;
+}
+
+/* Burger */
+.burger {
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    z-index: 1200;
+}
+
+.burger div {
+    width: 25px;
+    height: 3px;
+    background: white;
+    margin: 4px;
+    transition: 0.3s;
+}
+
+/* Overlay (fond gris quand menu ouvert) */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    z-index: 1050;
+}
+
+.overlay.active {
+    display: block;
+}

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="app.js" defer></script>
+    <style>
+        span {
+            /* background-color: black; */
+            /* attention au surlignement; */
+            opacity: 0;
+            /* color:white ; */
+            /* display: none; */
+            /* visibility: hidden; */
+        }
+
+        ;
+    </style>
+</head>
+
+<body>
+    <!-- 2 Version du spoiler, placer un texte caché au coeur d'un paragraphe, 
+     au click révéler le texte -->
+    <!-- Placer un bouton "Révéler", au click monre un nouveau 
+      paragraphe, et le cache si on reclick-->
+
+    <p>Lorem ipsum dolor sit amet consectetur <span> John est mort</span> adipisicing elit. Atque facilis obcaecati
+        nihil eveniet accusantium cumque assumenda saepe esse nulla modi, mollitia cupiditate, quasi officiis repellat
+        officia aut nam odio veritatis.</p>
+
+    <button>Réveler</button>
+    <div>
+        <p id="cache">John est mort</p>
+    </div>
+    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis consequatur earum molestiae expedita quam dolor
+        adipisci nisi doloribus ad, incidunt, nostrum recusandae ex atque cum minima quisquam, vero dignissimos vel.</p>
+</body>
+
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="app.js" defer></script>
+    <style>
+        .onglet {
+            background-color: RGB(255, 255, 255);
+        }
+
+        .onglet .onglet-texte {
+            display: flex;
+            background-color: RGB(255, 255, 255);
+        }
+
+        .onglet button {
+            padding: 1em;
+            background-color: RGB(255, 255, 255);
+            border: none;
+
+        }
+
+        .onglet .onglet-texte button:hover {
+            cursor: pointer;
+        }
+
+        .onglet .onglet-bodies {
+            padding: 0.5em;
+            background-color: RGB(235, 235, 235);
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .onglet button.active-onglet {
+            background-color: rgb(235, 235, 235);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="onglet">
+        <div class="onglet-texte">
+            <button class="active-onglet">Onglet 1</button>
+            <button>Onglet 2</button>
+            <button>Onglet 3</button>
+        </div>
+        <div class="onglet-bodies">
+            <p id="texte">Je m'apelle Guillaume</p>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Cours JS</h1>
+    <h2>Les variables</h2>
+
+    <script>
+        
+        console.log('Coucou');
+
+        // 2022 Evolution js
+        var chaine = 'Coucou';
+        //maintenant
+        let chaine2 = 'Salut';
+
+        console.log(chaine2);
+
+        //Type de variable
+
+        let a = 3 //Entier
+
+        let float = 4.35 // Nombre floattant
+
+        let chaine3 = "Bonjour à tous" // Aucune différence en 35
+        //  entre le simple et le double quote.
+
+        //Depuis 2022, on peut utiliser le back tic
+        // ALTgr + 7 
+        let paragraphe = `Bonjour
+        je m'appelle Guillaume`;
+        // le back tic permet d'interpréter une variable en la plaçant dans ${}
+
+        //Concaténation, addition de chaine de caractère (+).
+
+        //Bouléen
+        let bool = true //false
+
+        //Tableaux
+
+        let notes = [13, 14, 10];
+
+        console.log(notes);
+
+        let eleve = ['Guillaume','Laurens',[12, 15, 16]];
+
+        console.log(eleve);
+
+        console.log(eleve[1]);
+
+        console.log(eleve[2[1]]);
+
+        //les objets
+
+        // propriété == Variable intégré dans un objet 
+
+        // Méthode == Fonction intégré a un objet
+
+        let personne = {
+            nom_famille: 'laurens',
+            prenom:'Guillaume',
+            age: 33,
+            notes:[12, 14, 18],
+            job: {
+                nom: 'Formateur',
+                categorie:'PAO'
+            }
+        }
+
+        console.log(personne);
+
+        console.log(personne.notes[2]);
+
+        console.log(personne.job.categorie);
+
+        console.log('Salut'.length);
+
+        console.log('Salut' + 5);
+
+        // Nan not a number
+
+        
+
+    </script>
+</body>
+</html>

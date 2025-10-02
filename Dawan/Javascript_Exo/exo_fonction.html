@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        //Exercice 1 : Écris un programme qui transforme la phrase suivante en majuscules :
+        let phrase = "I love JavaScript"
+        
+        console.log(phrase.toUpperCase());
+        // Exo 2 : Écris un programme qui vérifie si les phrases suivante contiennent le mot "loup" :
+        let phrase2 = "Promenons nous dans les bois"
+        let pharse3 = "La ou le loup n'y est pas"
+        
+        console.log(phrase2.includes("loup"))
+        console.log(pharse3.includes("loup"));
+        
+        // Exo 3 : Génère 5 nombres aléatoires entre 0 et 50 (avec des décimales).
+        
+        // Les arrondir à l’entier le plus proche.
+ 
+        // Afficher chaque nombre avant et après l’arrondi.
+
+        for (let i = 0; i < 5; i++) {
+        let nb = Math.random() * 50;       // nombre aléatoire
+        let arrondi = Math.round(nb);      // arrondi
+        console.log("Avant :", nb.toFixed(2), " | Après :", arrondi);
+}
+    </script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="app copy.js" defer></script>
+    <style>
+        .onglet {
+            background-color: RGB(255, 255, 255);
+        }
+
+        .onglet .onglet-texte {
+            display: flex;
+            background-color: RGB(255, 255, 255);
+        }
+
+        .onglet img {
+            padding: 1em;
+            background-color: RGB(255, 255, 255);
+
+
+        }
+
+
+        .onglet .onglet-bodies {
+            padding: 0.5em;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .active-onglet {
+
+            border: 3px solid blue;
+
+            border-radius: 4%;
+        }
+
+        .imageP {
+            height: 400px;
+            text-align: center;
+            border-radius: 40px;
+            text-align: center;
+        }
+
+        img {
+            height: 70px;
+            padding: 2%;
+            cursor: pointer;
+
+        }
+    </style>
+</head>
+
+<body>
+    <div style="text-align: center;">
+        <div class="onglet">
+            <div class="onglet-bodies">
+                <img id="imgCenter" src="img1.jpeg" class="imageP" alt="">
+                <p id="titre">Arbre rose</p>
+            </div>
+        </div>
+        <div class="onglet-texte">
+            <img id="img1" src="img1.jpeg" class="active-onglet"></img>
+            <img id="img2" src="img2.jpeg"></img>
+            <img id="img3" src="img3.jpeg"></img>
+            <img id="img4" src="img4.jpeg"></img>
+        </div>
+    </div>
+</body>
+
+</html>
