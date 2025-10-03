@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+
+        //Date.now() => renvoi le temps passé depuis le 1 janvier 1970
+        function wait(){
+            const time = Date.now(duree);
+            console.log(time);
+            
+
+            while(Date.now() - time < duree){
+
+            }
+            //Cette metohde est synchrone -> Obliger d'attendre la résolution de 
+            // la boucle pour poursuibre la lecture du script
+
+        }
+
+        
+        //setTimeout => 2 parametre, 1 l'action à effectuer, 2 le temps a attendre avant de lancer la fonction
+        //Duree en miliseconde
+        setTimeout(function(){
+            //console.log("J'espere que vous n'avez pas trop attendu");
+        }, 3000);
+
+       // console.log("Je suis en avance")
+
+        let inter = setInterval(() => {
+            //console.log("Je suis en boucle");
+
+        }, 8000)
+
+        //Le returne des fonctions setTimeout et Interval vous renvoi un id
+        //console.log(inter);
+
+        //Cet id est nécessaire à la fonction clearInterval ou clearTimeout pour stopper l'élément
+        //clearInterval(2);
+
+        //Exo, creer une fonction depart(), compte 3,2,1 go !
+/*
+        function depart(){
+            
+            
+            let trois = setTimeout(() => {
+                console.log('3')
+            }, 2000)
+
+            let deux = setTimeout(() => {
+                console.log('2')
+            }, 4000)
+
+            let un = setTimeout(() => {
+                console.log('1')
+            }, 6000)
+
+            let go = setTimeout(() => {
+                console.log('Go !')
+            }, 8000)
+
+
+            */
+            function depart() {
+            let compteur = 3
+            let timer = setInterval(() => {
+                if (compteur > 0) {
+                    console.log(compteur)
+                    compteur--
+                } else {
+                    console.log("Go !")
+                    clearInterval(timer) //arrete la function
+                }
+            }, 1000)
+        }
+ 
+        depart()
+
+        setTimeout(()=>{
+            console.log('Affichage du menu burger');
+            setTimeout(() =>{
+                console.log('affichage carroussel');
+                setTimeout(() => {
+                    console.log('affichage des photos');
+                    
+                }, 4000)
+                
+            }, 2000)            
+        },3000)
+
+        //Hell callback
+
+        // => Promesse // ok JS je te promet que tu vas recevoir
+        // quelque chose, tu attends de le recevoir et après tu appliques ton codes
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

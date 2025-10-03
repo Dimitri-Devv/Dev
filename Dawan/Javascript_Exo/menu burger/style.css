@@ -19,6 +19,8 @@ button {
     padding: 10px;
     border-radius: 5%;
     background-color: green;
+    display: block;
+    margin-left: 50%;
 }
 
 header {

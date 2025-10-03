@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        //Promesse, c'est le résultat future d'une opération asychrone
+        //3 états différents
+        //fullfilled => la promesse a été tenu, tu peux passer à la suite 
+        //rejected => la promesse a été tenu, tu rèagis autremet
+        //pending => la promesse en cours
+        
+        // Le rejecte est optionnelle, il est possible que 
+        // vous ayez des promesses qui tienne quoi qu'il arrive
+
+        const p = new Promise(function(resolve, reject){
+            setTimeout(() => {
+                resolve('Salut')
+            }, 3000)
+
+        })
+        console.log(p);
+        //Récupérer le résultat de la promesse et de poursuivre l'action si la promesse est tenu
+        p.then(function(resultat_resolve){
+            console.log('le texte de la resolution de la promesse : ' + resultat_resolve);
+            console.log(p);
+            
+        });
+        
+        p.catch(function(resultat_reject){
+            console.log('Erreur lors de la promesse');
+            
+        })
+
+        p.finally(function(){
+            console.log('code qui sera la quoi qu il arrive')
+        })
+
+        function wait(temps){
+            return new Promise(function(resolve, reject){
+                if(temps < 0){
+                    reject('le temps doit etre positif')
+                }
+
+                setTimeout(() => {
+                    resolve("attende de " + temps + "ms terminé")
+                }, temps);
+            })
+        }
+        
+        wait(1000)
+            .then(message => {
+                console.log("3")
+                return wait(1000)
+            })
+            /*.catch(erreur => {
+                *onsole.log("erreur : ", erreur);
+            })*/
+           .then(() => {
+            console.log("2");
+            return wait(1000)
+            
+           })
+
+           //Methode plus morderne
+           async function main() {
+                return 'salut'
+           }
+
+           async function waitFor() {
+                
+                await wait(3000);
+                console.log('comment ça va ?');
+                await wait(2000)
+                console.log('c est cool ?');
+                
+                
+                try{
+                    await wait(1000);
+                console.log("salut salut");
+                }catch(erreur){
+                    console.log("Erreur : ", erreur);
+                    
+                }
+           }
+
+
+    </script>
+</head>
+<body>
+
+    
+</body>
+</html>

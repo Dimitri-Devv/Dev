@@ -1,0 +1,67 @@
+ 
+<!-- Monter un formulaire  pour récupérer-->
+<!-- Un pseudo, vérifier qu'il n'y a pas d'espace -->
+<!-- Un mot de passe, vérifier + de 5 caractère -->
+<!-- Une liste sélective proposant 3 choix, Formule 1 15€, Formule 2 20€, formule 3 30€ -->
+<!-- 2 case à cocher, choix unique, Avec dessert 2€ ou sans dessert 0€ -->
+<!-- 2 case à cocher optionnelle, Nappage caramel 1€, Pépite de chocolat 2€ -->
+<!-- A la sousmission , retirer le formulaire et afficher le Pseudo et le prix total de la commande -->
+<!-- Le pseudo et le mot de passe doivent afficher des messages d'erreur en direct dès la sortie du champs si ils ne respectent pas les conditions -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="app.js" defer></script>
+    <style>
+        span{
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <form action="">
+        <span id="pseudo_error">Le pseudo ne doit pas avoir d'espace</span>
+        <div>
+            <label for="pseudo">Pseudo</label>
+            <input type="text" name="pseudo" id="pseudo">
+        </div>
+        <span id="password_error">Le mdp doit dépasser 5 caractères</span>
+        <div>
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password">
+        </div>
+        <div>
+            <label for="formule">Choisissez votre formule</label>
+            <select name="formule" id="formule">
+                <option value="15">Formule 1 - 15€</option>
+                <option value="20">Formule 2 - 20€</option>
+                <option value="30">Formule 3 - 30€</option>
+            </select>
+        </div>
+        <fieldset>
+            <legend>Un dessert ?</legend>
+            <label for="oui">Dessert 2€</label>
+            <input type="radio" name="dessert" id="oui" value="2">
+            <label for="non">Pas de dessert 0€</label>
+            <input type="radio" name="dessert" id="non" value="0">
+        </fieldset>
+        <fieldset>
+            <legend>Un supplément ?</legend>
+            <label for="nappage">Nappage caramel 1€</label>
+            <input type="checkbox" name="supp" id="nappage" value="1">
+            <label for="pepite">Pepite de choco 2€</label>
+            <input type="checkbox" name="supp" id="pepite" value="2">
+        </fieldset>
+        <span id="submit_error">Veuillez résoudre toutes les erreur avant de soumetre</span>
+        <input type="submit" value="Envoyer">
+    </form>
+
+    <div id="affichage">
+        <!-- Affichage -->
+    </div>
+</body>
+</html>
+ 

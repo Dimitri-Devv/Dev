@@ -1,0 +1,46 @@
+ 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        h2, h3{
+            transition: 1s;
+            opacity: 100;
+        }
+        .hide{
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+    <h2>Salut</h2>
+    <h3 class="hide">Comment ca va ?</h3>
+
+    <script>
+        function wait(temps){
+            return new Promise(function(resolve, reject){
+                if(temps < 0){
+                    reject("Le temps doit etre positif")
+                }
+                setTimeout(()=>{
+                    resolve("Attente de " + temps + "ms terminé")
+                }, temps)
+            })
+        }
+        async function waitFor(){
+            try{
+                await wait(2000)
+                document.querySelector('h2').classList.add('hide')
+                document.querySelector('h3').classList.remove('hide')
+            }catch (erreur) {
+                console.log("Erreur : ", erreur);
+            }
+        }
+        waitFor()
+    </script>
+</body>
+</html>
+ 
