@@ -15,3 +15,19 @@ const firstNames2 = persons.map((element) => {
 
 console.log(firstNames);
 console.log(firstNames2);
+
+//FlatMap()
+
+const chiffres = [1,2,3,4,5]
+
+const chiffresCarre = chiffres.map((chiffre) => chiffre * chiffre)
+
+console.log(chiffresCarre);
+
+const chiffresCarre2 = chiffres.map((chiffre) => [chiffre * chiffre])
+console.log(chiffresCarre2);
+
+const flatMapCarre = chiffres.flatMap((chiffre) => [chiffre * chiffre]);
+console.log(flatMapCarre);
+
+
