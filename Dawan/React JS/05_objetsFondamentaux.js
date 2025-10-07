@@ -64,4 +64,25 @@ console.log(car2.name);
 car2.name = null;
 console.log(car2.name);
 
-const carError = new Car("", "X5", 2019);
+//const carError = new Car("", "X5", 2019); //Erreur
+
+// 6. Copie d'objet
+let car6 = new Car("Ford", "Focus", 2019);
+
+//Attention, un type complexe(fonction, objet, tableau) ne doivent pas être copiés avec un simple ' = '
+let carCopy = car6;
+
+console.log(car6, carCopy);
+
+carCopy.year = 2016;
+
+//Copie propre
+let carCopyPropre = new Car ("Audi");
+carCopyPropre = Object.assign(carCopyPropre, car6); // --> carCopyPropre est une copie de car6
+console.log(carCopyPropre);
+
+let copy = Object.assign({}, car6);
+console.log(copy);
+
+//Copie propre avec spread operator
+
