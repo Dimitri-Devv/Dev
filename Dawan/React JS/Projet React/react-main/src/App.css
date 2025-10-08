@@ -1,0 +1,11 @@
+.container {
+  margin: 0;
+  padding: 2rem;
+  text-align: left;
+}
+ 
+.my-text {
+  background-color: black;
+  color: white;
+}
+ 
