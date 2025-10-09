@@ -1,55 +1,47 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { TableProducts } from "./TableProducts";
- 
+
 export const RequestApiExemple = () => {
   const [products, setProducts] = useState([]);
- 
+
   useEffect(() => {
     loadProducts();
+    // loadProductAsync();
   }, []);
- 
-  
- 
 
+  const handleDelete = (product) => {
+    setProducts((prev) => prev.filter((p) => p.id !== product.id));
+  };
 
-    const loadProducts = () => {
-     
+  const loadProducts = () => {
+    // Quand on ne souhaite pas gérer les erreurs, on peut utiliser que le .then
+    axios.get("http://localhost:3001/products").then((resp) => {
+      setProducts(resp.data);
+      console.log(resp.data);
+    });
 
     axios
-      .get("http://localhost:3001/products") // Quand on ne souhaite pas gérer les erreurs, on peut utiliser que le .then
-      .then((resp) => {
-        setProducts(resp.data);
-        console.log(resp.data);
-      });
+      .get("http://localhost:3001/products")
+      .then((resp) => console.log(resp.data)) // fonction se déclenche uniquement si j'ai un retour sans erreur
+      .catch((err) => console.error(err)) // fonction se déclenche uniquement si j'ai une erreur
+      .finally(() => console.log("réponse reçue"));
+  };
 
-         axios
-    .get("http://localhost:3001/products")
-    .then((resp) => console.log(resp.data)) // fonction se déclenche uniquement si j'ai un retour sans erreur
-    .catch((err) => console.error(err)) // fonction se déclenche uniquement si j'ai une erreur
-    .finally(() => console.log("réponse reçue"));
-
-
-    };
-
-    //Autre syntaxe possible avec axios
-    const loadProductsAsync = async () => {
-        try {
-            const response = axios.get("http://localhost:3001/products");
-            setProducts(response.data)
-        } catch(e){
-            console.error(e);
-
-        }
+  // Autre syntaxe possible avec axios
+  const loadProductAsync = async () => {
+    try {
+      const response = await axios.get("http://localhost:3001/products");
+      setProducts(response.data);
+    } catch (e) {
+      console.error(e);
     }
+  };
 
   return (
     <>
       <p>Tableau de produits: </p>
-    
-            <TableProducts data={products}></TableProducts>
+      <TableProducts data={products} deleteProduct={handleDelete} />
     </>
   );
 };
- 
-

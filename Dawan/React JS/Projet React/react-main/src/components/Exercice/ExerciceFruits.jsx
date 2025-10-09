@@ -23,6 +23,21 @@ export const ExerciceFruits = () => {
     (product) => product.category === "Vegetables"
   );
 
+  const AutreProducts = [
+  { category: "Fruits", price: "$1", stocked: true, name: "Apple" },
+  { category: "Fruits", price: "$1", stocked: true, name: "Dragonfruit" },
+  { category: "Fruits", price: "$2", stocked: false, name: "Passionfruit" },
+  { category: "Vegetables", price: "$2", stocked: true, name: "Spinach" },
+  { category: "Vegetables", price: "$4", stocked: false, name: "Pumpkin" },
+  { category: "Vegetables", price: "$1", stocked: true, name: "Peas" }
+]
+
+const fruitsA = AutreProducts.filter((product) => product.category === "Fruits")
+const vegetablesA = AutreProducts.filter(
+    (product) => product.category === "Vegetables"
+  );
+
+
   return (
     <>
       <h1>ExerciceFruits</h1>
@@ -57,6 +72,18 @@ export const ExerciceFruits = () => {
       />
       <FruitsList
         products={vegetables}
+        afficherHorsSotck={checked}
+        searchValue={search}
+      />
+
+      <FruitsList
+        products={fruitsA}
+        afficherHorsSotck={checked}
+        searchValue={search}
+      />
+
+      <FruitsList 
+        products={vegetablesA}
         afficherHorsSotck={checked}
         searchValue={search}
       />
