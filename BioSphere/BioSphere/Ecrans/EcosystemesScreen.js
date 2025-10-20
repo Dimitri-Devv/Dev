@@ -1,164 +1,140 @@
-
-import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, FlatList } from 'react-native';
+import React, { useState, useCallback, useContext } from 'react';
+import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import React, { useEffect, useState } from "react";
-import api from "../Components/api/biosphereApi";
+import api from './services/api';
+import { AppContext } from '../Ecrans/context/AppContext';
 
-export default function EcosystemesScreen() {
-  const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    paddingHorizontal: 20,
-    paddingTop: 60,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-  },
-  addButton: {
-    backgroundColor: '#f2f2f2',
-    borderRadius: 20,
-    padding: 6,
-  },
-  subtitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    marginTop: 25,
-  },
-  cardsContainer: {
-    marginTop: 15,
-  },
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: 15,
-    width: 230,
-    marginRight: 15,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 3 },
-    shadowRadius: 5,
-    elevation: 3,
-  },
-  cardImage: {
-    width: '100%',
-    height: 120,
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
-  },
-  cardContent: {
-    padding: 10,
-  },
-  cardTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 6,
-  },
-  infoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 3,
-  },
-  infoText: {
-    fontSize: 14,
-    marginLeft: 4,
-  },
-  secondaryText: {
-    fontSize: 13,
-    color: '#555',
-    marginLeft: 4,
-  },
-});
-const [ecosystems, setEcosystems] = useState([]);
+export default function EcosystemesScreen({ route, navigation }) {
+  const user = route.params?.user;
+  const [ecosystems, setEcosystems] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await api.get("/ecosystems");
-        setEcosystems(res.data);
-      } catch (err) {
-        console.error("Erreur API :", err);
+  // 🟢 Récupération du thème global
+  const { theme } = useContext(AppContext);
+  const isDark = theme === 'dark';
+
+  const colors = {
+    bg: isDark ? '#121212' : '#fff',
+    text: isDark ? '#fff' : '#333',
+    secondaryText: isDark ? '#bbb' : '#666',
+    cardBg: isDark ? '#1e1e1e' : '#f9f9f9',
+    border: isDark ? '#333' : '#ddd',
+  };
+
+  // 🧭 Traduction du type
+  const formatType = (type) => {
+    switch (type) {
+      case 'eau_de_mer': return 'Eau de mer';
+      case 'eau_douce': return 'Eau douce';
+      case 'terrarium': return 'Terrarium';
+      case 'bassin': return 'Bassin';
+      case 'plante': return 'Plante';
+      default: return type;
+    }
+  };
+
+  // 🔄 Récupération des écosystèmes
+  const fetchEcosystems = async () => {
+    if (!user?.id) return;
+    setLoading(true);
+    try {
+      const res = await api.get(`/ecosystems/${user.id}`);
+      setEcosystems(res.data);
+    } catch (err) {
+      console.error(err);
+      Alert.alert('Erreur', "Impossible de charger les écosystèmes");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useFocusEffect(useCallback(() => { fetchEcosystems(); }, [user?.id]));
+
+  // ❌ Suppression d’un écosystème
+  const handleDelete = (ecoId, name) => {
+    Alert.alert("Supprimer", `Supprimer "${name}" ?`, [
+      { text: 'Annuler', style: 'cancel' },
+      {
+        text: 'Supprimer', style: 'destructive', onPress: async () => {
+          try {
+            await api.delete(`/ecosystems/${ecoId}`);
+            fetchEcosystems();
+          } catch (e) {
+            Alert.alert('Erreur', "Suppression impossible");
+          }
+        }
       }
-    };
-    fetchData();
-  }, []);
+    ]);
+  };
 
-
-
-  return (
-    <ScrollView style={styles.container}>
-      {/* En-tête */}
-      <View style={styles.header}>
-        <Text style={styles.title}>BioSphere</Text>
-        <TouchableOpacity style={styles.addButton}>
-          <Ionicons name="add" size={26} color="#000" />
+  // 🪴 Affichage d’un écosystème
+  const renderItem = ({ item }) => (
+    <TouchableOpacity
+      style={[styles.card, { backgroundColor: colors.cardBg, borderColor: colors.border }]}
+      onPress={() => navigation.navigate('EcosystemDetail', { ecosystem: item, user })}
+    >
+      <View style={styles.headerRow}>
+        <Text style={[styles.ecoName, { color: colors.text }]}>{item.name}</Text>
+        <TouchableOpacity onPress={() => handleDelete(item.id, item.name)}>
+          <Ionicons name="trash" size={22} color="red" />
         </TouchableOpacity>
       </View>
 
-      <Text style={styles.subtitle}>Mes écosystèmes</Text>
+      {!!item.photoUrl && (
+        <Image source={{ uri: item.photoUrl }} style={styles.cardImage} />
+      )}
 
-      ------------------------
+      <View style={styles.infoRow}>
+        <Ionicons name="water-outline" size={18} color="#2a9d8f" />
+        <Text style={[styles.ecoType, { color: colors.secondaryText }]}>  {formatType(item.type)}</Text>
+      </View>
+    </TouchableOpacity>
+  );
 
-      Liste des cartes
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.cardsContainer}>
-        {/* --- Carte Aquarium --- */}
-        <View style={styles.card}>
-          <Image
-            source={{ uri: 'https://cdn.futura-sciences.com/buildsv6/images/square720/6/2/4/6244012662_126412_plantes-aquarium-eau-douce.jpg' }}
-            style={styles.cardImage}
-          />
-          <View style={styles.cardContent}>
-            <Text style={styles.cardTitle}>Aquarium d'eau douce</Text>
-            <View style={styles.infoRow}>
-              <Ionicons name="thermometer-outline" size={18} color="black" />
-              <Text style={styles.infoText}>25 °C</Text>
-              <Ionicons name="water-outline" size={18} color="black" style={{ marginLeft: 10 }} />
-              <Text style={styles.infoText}>7.4</Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Ionicons name="refresh-outline" size={18} color="#007AFF" />
-              <Text style={styles.secondaryText}>Changement d'eau dans 4 jours</Text>
-            </View>
-          </View>
-        </View>
+  return (
+    <View style={[styles.container, { backgroundColor: colors.bg }]}>
+      <Text style={[styles.title, { color: colors.text }]}>
+        Bienvenue {user?.username || user?.email} 👋
+      </Text>
+      <Text style={[styles.subtitle, { color: colors.secondaryText }]}>
+        Vos écosystèmes :
+      </Text>
 
-        {/* --- Carte Terrarium --- */}
-        <View style={styles.card}>
-          <Image
-            source={{ uri: 'https://i.redd.it/3cupuild9ufa1.jpg' }}
-            style={styles.cardImage}
-          />
-          <View style={styles.cardContent}>
-            <Text style={styles.cardTitle}>Terrarium</Text>
-            <View style={styles.infoRow}>
-              <Ionicons name="water-outline" size={18} color="black" />
-              <Text style={styles.infoText}>70 %</Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Ionicons name="checkmark-circle-outline" size={18} color="#007AFF" />
-              <Text style={styles.secondaryText}>Vérifier l'humidité</Text>
-            </View>
-          </View>
-        </View>
-        <View style={styles.container}>
-      <Text style={styles.title}>🌎 Mes écosystèmes</Text>
-      <FlatList
-        data={ecosystems}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.card}>
-            <Text style={styles.name}>{item.name}</Text>
-            <Text>Type : {item.type}</Text>
-          </View>
-        )}
-      />
+      {loading ? (
+        <Text style={[styles.loadingText, { color: colors.secondaryText }]}>Chargement…</Text>
+      ) : ecosystems.length === 0 ? (
+        <Text style={[styles.empty, { color: colors.secondaryText }]}>
+          Aucun écosystème trouvé.
+        </Text>
+      ) : (
+        <FlatList
+          data={ecosystems}
+          keyExtractor={(i) => i.id.toString()}
+          renderItem={renderItem}
+          showsVerticalScrollIndicator={false}
+        />
+      )}
     </View>
-      </ScrollView>
-    </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1, padding: 20 },
+  title: { fontSize: 22, fontWeight: 'bold', marginBottom: 10 },
+  subtitle: { fontSize: 16, marginBottom: 15 },
+  loadingText: { textAlign: 'center', marginTop: 40 },
+  empty: { textAlign: 'center', marginTop: 40 },
+  card: {
+    borderRadius: 12,
+    padding: 15,
+    marginBottom: 15,
+    borderWidth: 1,
+    elevation: 2,
+  },
+  headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  ecoName: { fontSize: 18, fontWeight: 'bold' },
+  cardImage: { width: '100%', height: 150, borderRadius: 10, marginTop: 10 },
+  infoRow: { flexDirection: 'row', alignItems: 'center', marginTop: 8 },
+  ecoType: { fontSize: 14 },
+});
