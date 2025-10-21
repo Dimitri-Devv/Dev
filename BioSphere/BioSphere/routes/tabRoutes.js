@@ -66,14 +66,7 @@ export default function TabRoutes({ route, navigation }) {
         )}
       </Tab.Screen>
 
-      {/* --- COMMUNAUTÉ --- */}
-      <Tab.Screen
-        name="Communauté"
-        component={CommunauteScreen}
-        options={{
-          headerTitle: 'Communauté',
-        }}
-      />
+    
 
       {/* --- PROFIL --- */}
       <Tab.Screen
@@ -88,6 +81,12 @@ export default function TabRoutes({ route, navigation }) {
         )}
       </Tab.Screen>
 
+ {/* --- Communaute --- */}
+      <Tab.Screen name="Communauté">
+  {props => <CommunauteScreen {...props} route={{ ...props.route, params: { user } }} />}
+      </Tab.Screen>
+
+
       {/* --- PARAMÈTRES --- */}
       <Tab.Screen
         name="Paramètres"
@@ -95,11 +94,7 @@ export default function TabRoutes({ route, navigation }) {
         options={{ headerTitle: 'Paramètres' }}
       />
 
-         {/* --- Communaute --- */}
-      <Tab.Screen name="Communauté">
-  {props => <CommunauteScreen {...props} route={{ ...props.route, params: { user } }} />}
-      </Tab.Screen>
-
+        
     </Tab.Navigator>
   );
 }
