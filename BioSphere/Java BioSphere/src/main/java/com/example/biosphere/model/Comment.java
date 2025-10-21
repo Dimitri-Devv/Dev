@@ -13,20 +13,29 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(columnDefinition = "TEXT")
     private String text;
+
+    @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    // 🔹 Post lié au commentaire
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
-    @JsonIgnoreProperties({"comments", "author"}) // évite la boucle infinie
+    @JsonIgnoreProperties({"comments", "author", "likedBy"})
     private Post post;
 
+    // 🔹 Auteur du commentaire
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    @JsonIgnoreProperties({"posts", "comments", "ecosystems", "password"})
+    @JsonIgnoreProperties({
+            "posts", "comments", "ecosystems",
+            "messagesSent", "messagesReceived",
+            "password"
+    })
     private User author;
 
-    // Getters & setters
+    // --- GETTERS & SETTERS ---
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

@@ -12,6 +12,7 @@ import TabRoutes from "./routes/tabRoutes";
 import EcosystemDetailScreen from "./Ecrans/EcosystemDetailScreen";
 import CommentsScreen from "./Ecrans/CommentsScreen";
 import ChatScreen from "./Ecrans/ChatScreen";
+import ProfilPublic from "./Ecrans/ProfilPublic";
 
 const Stack = createNativeStackNavigator();
 
@@ -50,6 +51,11 @@ export default function App() {
 
           <Stack.Screen name="Comments" component={CommentsScreen} options={{ title: "Commentaires" }} />
           <Stack.Screen name="Chat" component={ChatScreen} options={{ title: "Messages" }} />
+          <Stack.Screen
+            name="ProfilPublic"
+            component={ProfilPublic}
+            options={{ title: "Profil utilisateur" }}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </AppProvider>

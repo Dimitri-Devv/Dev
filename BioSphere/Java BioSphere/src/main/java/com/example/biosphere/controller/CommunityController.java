@@ -1,11 +1,11 @@
 package com.example.biosphere.controller;
-
+import com.example.biosphere.model.Message;
 import com.example.biosphere.model.Comment;
 import com.example.biosphere.model.Post;
 import com.example.biosphere.service.CommunityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
+import com.example.biosphere.model.Ecosystem;
 import java.util.List;
 import java.util.Map;
 
@@ -46,4 +46,9 @@ public class CommunityController {
         String text = (String) body.get("text");
         return communityService.addComment(postId, userId, text);
     }
+
+
+
+
+
 }
