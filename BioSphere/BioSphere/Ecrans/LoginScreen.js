@@ -8,6 +8,10 @@ import {
   Alert,
   Image,
   Animated,
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Platform,
+  Keyboard,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import api from './services/api';
@@ -47,49 +51,56 @@ export default function LoginScreen({ navigation }) {
   });
 
   return (
-    <Animated.View style={[styles.container]}>
-      <LinearGradient
-        colors={[bg1, bg2]}
-        style={StyleSheet.absoluteFillObject}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-      />
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        <Animated.View style={[styles.container]}>
+          <LinearGradient
+            colors={[bg1, bg2]}
+            style={StyleSheet.absoluteFillObject}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+          />
 
-      <View style={styles.card}>
-        <Image
-          source={require('../assets/logo.png')}
-          style={{ width: 110, height: 110, marginBottom: 20 }}
-        />
-        <Text style={styles.title}>Connexion</Text>
+          <View style={styles.card}>
+            <Image
+              source={require('../assets/logo.png')}
+              style={{ width: 110, height: 110, marginBottom: 20 }}
+            />
+            <Text style={styles.title}>Connexion</Text>
 
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          placeholderTextColor="#999"
-          value={email}
-          onChangeText={setEmail}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Mot de passe"
-          placeholderTextColor="#999"
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-        />
+            <TextInput
+              style={styles.input}
+              placeholder="Email"
+              placeholderTextColor="#999"
+              value={email}
+              onChangeText={setEmail}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Mot de passe"
+              placeholderTextColor="#999"
+              secureTextEntry
+              value={password}
+              onChangeText={setPassword}
+            />
 
-        <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-          <Text style={styles.loginText}>Se connecter</Text>
-        </TouchableOpacity>
+            <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+              <Text style={styles.loginText}>Se connecter</Text>
+            </TouchableOpacity>
 
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Register')}
-          style={styles.signupButton}
-        >
-          <Text style={styles.signupText}>Créer un compte</Text>
-        </TouchableOpacity>
-      </View>
-    </Animated.View>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('Register')}
+              style={styles.signupButton}
+            >
+              <Text style={styles.signupText}>Créer un compte</Text>
+            </TouchableOpacity>
+          </View>
+        </Animated.View>
+      </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
 }
 

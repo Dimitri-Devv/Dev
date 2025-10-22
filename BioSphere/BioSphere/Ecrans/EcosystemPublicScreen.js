@@ -15,7 +15,6 @@ import {
   Pressable,
 } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import * as ImagePicker from 'expo-image-picker';
 import { LineChart } from 'react-native-chart-kit';
 import api from './services/api';
 import { AppContext } from '../Ecrans/context/AppContext';
@@ -63,11 +62,9 @@ const PARAMS_BY_TYPE = {
   plante: ['Humidité du sol', 'Température', 'Lumière', 'CO₂', 'pH', 'EC (Conductivité)', 'Nutriments']
 };
 
-export default function EcosystemDetailScreen({ route, navigation }) {
+export default function EcosystemDetailScreenPublic({ route, navigation }) {
   const { ecosystem } = route.params;
   const [eco, setEco] = useState(ecosystem);
-  const [editing, setEditing] = useState(false);
-  const [name, setName] = useState(ecosystem.name);
   const [photoUrl, setPhotoUrl] = useState(ecosystem.photoUrl);
   const [equipment, setEquipment] = useState([]);
   const [newEquip, setNewEquip] = useState({ name: '', brand: '', details: '' });
@@ -343,22 +340,6 @@ export default function EcosystemDetailScreen({ route, navigation }) {
   useEffect(() => { loadEquipment(); }, []);
   useEffect(() => { loadHistory(); }, [selectedParam]);
 
-  const pickImage = async () => {
-    const res = await ImagePicker.launchImageLibraryAsync({ allowsEditing: true, quality: 1 });
-    if (!res.canceled) setPhotoUrl(res.assets[0].uri);
-  };
-
-  const saveEco = async () => {
-    try {
-      const body = { name, photoUrl, type: eco.type };
-      const r = await api.put(`/ecosystems/${eco.id}`, body);
-      setEco(r.data);
-      setEditing(false);
-      Alert.alert('Modifié', 'Écosystème mis à jour');
-    } catch {
-      Alert.alert('Erreur', 'Mise à jour impossible');
-    }
-  };
 
   const [showEquipInputs, setShowEquipInputs] = useState(false);
   const addEquip = async () => {
@@ -571,231 +552,21 @@ export default function EcosystemDetailScreen({ route, navigation }) {
                 imageStyle={styles.imageBannerImageModern}
                 resizeMode="cover"
               >
-                {/* Bouton modifier en haut à droite de l'image */}
-                <TouchableOpacity
-                  style={{
-                    position: 'absolute',
-                    top: 12,
-                    right: 12,
-                    backgroundColor: 'rgba(255,255,255,0.8)',
-                    borderRadius: 20,
-                    padding: 6,
-                    zIndex: 10,
-                  }}
-                  onPress={() => (editing ? saveEco() : setEditing(true))}
-                  activeOpacity={0.8}
-                >
-                  <Ionicons
-                    name={editing ? 'checkmark' : 'create-outline'}
-                    size={22}
-                    color={colors.accent}
-                  />
-                </TouchableOpacity>
                 <View style={styles.ecoImageOverlay}>
-                  {editing ? (
-                    <TextInput
-                      style={[
-                        styles.ecoImageText,
-                        {
-                          backgroundColor: 'rgba(255,255,255,0.7)',
-                          color: '#2a9d8f',
-                          borderRadius: 8,
-                          paddingHorizontal: 8,
-                        },
-                      ]}
-                      value={name}
-                      onChangeText={setName}
-                      placeholder="Nom de l'écosystème"
-                      placeholderTextColor="#2a9d8f"
-                    />
-                  ) : (
-                    <Text style={styles.ecoImageText}>{eco.name}</Text>
-                  )}
+                  <Text style={styles.ecoImageText}>{eco.name}</Text>
                 </View>
-                {editing && (
-                  <TouchableOpacity style={styles.changePhotoBtn} onPress={pickImage} activeOpacity={0.8}>
-                    <Ionicons name="image-outline" size={20} color={colors.white} />
-                    <Text style={styles.changePhotoBtnText}>Changer la photo</Text>
-                  </TouchableOpacity>
-                )}
               </ImageBackground>
             ) : (
               <View style={[styles.imageBanner, styles.imageBannerPlaceholder, styles.imageBannerImageModern]}>
-                {/* Bouton modifier en haut à droite de l'image placeholder */}
-                <TouchableOpacity
-                  style={{
-                    position: 'absolute',
-                    top: 12,
-                    right: 12,
-                    backgroundColor: 'rgba(255,255,255,0.8)',
-                    borderRadius: 20,
-                    padding: 6,
-                    zIndex: 10,
-                  }}
-                  onPress={() => (editing ? saveEco() : setEditing(true))}
-                  activeOpacity={0.8}
-                >
-                  <Ionicons
-                    name={editing ? 'checkmark' : 'create-outline'}
-                    size={22}
-                    color={colors.accent}
-                  />
-                </TouchableOpacity>
-                {/* Nom éditable ou non sur le placeholder également */}
                 <View style={styles.ecoImageOverlay}>
-                  {editing ? (
-                    <TextInput
-                      style={[
-                        styles.ecoImageText,
-                        {
-                          backgroundColor: 'rgba(255,255,255,0.7)',
-                          color: '#2a9d8f',
-                          borderRadius: 8,
-                          paddingHorizontal: 8,
-                        },
-                      ]}
-                      value={name}
-                      onChangeText={setName}
-                      placeholder="Nom de l'écosystème"
-                      placeholderTextColor="#2a9d8f"
-                    />
-                  ) : (
-                    <Text style={styles.ecoImageText}>{eco.name}</Text>
-                  )}
+                  <Text style={styles.ecoImageText}>{eco.name}</Text>
                 </View>
                 <Ionicons name="image-outline" size={64} color={colors.accent} />
-                {editing && (
-                  <TouchableOpacity style={styles.changePhotoBtn} onPress={pickImage} activeOpacity={0.8}>
-                    <Ionicons name="image-outline" size={20} color={colors.white} />
-                    <Text style={styles.changePhotoBtnText}>Ajouter une photo</Text>
-                  </TouchableOpacity>
-                )}
               </View>
             )}
           </View>
 
-          {/* Summary stats cards + bouton de choix */}
-          <View style={[styles.cardSection, { marginBottom: 24 }]}>
-            <View style={[styles.summaryContainer, { alignItems: 'flex-start' }]}>
-              {/* Ligne horizontale avec titre et bouton à droite */}
-              <View style={{ flexDirection: 'row', alignItems: 'center', width: '100%', marginBottom: 12 }}>
-                <Text style={{ fontWeight: '900', fontSize: 20, color: colors.accent, flex: 1 }}>Résumé rapide</Text>
-                <TouchableOpacity
-                  style={styles.chooseParamsBtn}
-                  onPress={() => setSummaryModalVisible(true)}
-                  activeOpacity={0.8}
-                >
-                  <Ionicons name="settings-outline" size={18} color={colors.accent} style={{ marginRight: 3 }} />
-                  <Text style={styles.chooseParamsBtnText}>Paramètres</Text>
-                </TouchableOpacity>
-              </View>
-              <View style={{ flexDirection: 'row', flex: 1 }}>
-                {summaryParams.map(({ param, value }) => (
-                  <View key={param} style={styles.statCardModern}>
-                    {/* Status indicator dot */}
-                    <View style={[styles.statusDot, { backgroundColor: getParamStatusColor(param) }]} />
-                    <View style={styles.statIconContainerModern}>
-                      <MaterialCommunityIcons name={ICONS[param] || 'flask-outline'} size={32} color={colors.accent} />
-                    </View>
-                    <Text style={styles.statNameModern}>{param}</Text>
-                    <Text style={styles.statValueModern} numberOfLines={1}>
-                      {value !== null ? `${value} ${getUnit(param)}` : '-'}
-                    </Text>
-                  </View>
-                ))}
-              </View>
-            </View>
-          </View>
-
-          {/* Modal de sélection des paramètres du résumé */}
-          <Modal
-            visible={summaryModalVisible}
-            animationType="slide"
-            transparent
-            onRequestClose={() => setSummaryModalVisible(false)}
-          >
-            <Pressable
-              style={styles.modalBackdrop}
-              onPress={() => setSummaryModalVisible(false)}
-            />
-            <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>Choisir jusqu'à 3 paramètres à afficher</Text>
-              <ScrollView style={{ maxHeight: 320, marginBottom: 12 }}>
-                {availableParams.map(p => {
-                  const checked = selectedSummaryParams.includes(p);
-                  const disabled = !checked && selectedSummaryParams.length >= 3;
-                  return (
-                    <TouchableOpacity
-                      key={`choose-${p}`}
-                      style={[
-                        styles.modalParamRow,
-                        checked && styles.modalParamRowChecked,
-                        disabled && styles.modalParamRowDisabled,
-                      ]}
-                      onPress={() => {
-                        if (checked) {
-                          setSelectedSummaryParams(prev => prev.filter(x => x !== p));
-                        } else if (selectedSummaryParams.length < 3) {
-                          setSelectedSummaryParams(prev => [...prev, p]);
-                        }
-                      }}
-                      activeOpacity={0.8}
-                      disabled={disabled}
-                    >
-                      <MaterialCommunityIcons
-                        name={ICONS[p] || 'flask-outline'}
-                        size={22}
-                        color={checked ? colors.accent : '#bbb'}
-                        style={{ marginRight: 8 }}
-                      />
-                      <Text style={[styles.modalParamText, checked && { color: colors.accent }]}>{p}</Text>
-                      <View style={[styles.checkbox, checked && styles.checkboxChecked]}>
-                        {checked && <Ionicons name="checkmark" size={16} color="#fff" />}
-                      </View>
-                    </TouchableOpacity>
-                  );
-                })}
-              </ScrollView>
-              <TouchableOpacity
-                style={[styles.modalSaveBtn, { backgroundColor: colors.accent }]}
-                onPress={async () => {
-                  try {
-                    await api.put(`/ecosystems/${eco.id}/summary-params`, selectedSummaryParams);
-                    setEco(prev => ({ ...prev, summaryParams: selectedSummaryParams }));
-                    setSummaryModalVisible(false);
-                    Alert.alert('Succès', 'Résumé rapide mis à jour !');
-                  } catch (err) {
-                    console.error('Erreur maj params:', err);
-                    Alert.alert('Erreur', 'Impossible de sauvegarder les paramètres.');
-                  }
-                }}
-                activeOpacity={0.8}
-              >
-                <Text style={styles.modalSaveBtnText}>Enregistrer</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.modalCloseBtn}
-                onPress={() => setSummaryModalVisible(false)}
-                activeOpacity={0.8}
-              >
-                <Text style={styles.modalCloseBtnText}>Fermer</Text>
-              </TouchableOpacity>
-            </View>
-          </Modal>
-
-          {/* Paramètres suivis — chips de sélection */}
-
-          {/* Quick analysis */}
-          <View style={styles.analysisContainer}>
-            <Text style={styles.analysisTitle}>Analyse rapide</Text>
-            {quickAnalysis.length === 0 ? (
-              <Text style={styles.analysisText}>✅ Tous les paramètres sont dans les valeurs idéales.</Text>
-            ) : (
-              quickAnalysis.map((txt, i) => (
-                <Text key={i} style={styles.analysisText}>• {txt}</Text>
-              ))
-            )}
-          </View>
+          {/* Affichage principal de l'écosystème (photo, nom, type) */}
 
           {/* Graph section */}
           <View style={styles.chartCard}>
@@ -828,7 +599,7 @@ export default function EcosystemDetailScreen({ route, navigation }) {
               style={{ borderRadius: 20, marginHorizontal: 'auto' }}
             />
 
-            {/* Récapitulatif des dernières mesures */}
+            {/* Carrousel des dernières mesures */}
             <View style={styles.latestWrap}>
               <Text style={styles.latestTitle}>📋 Dernières mesures enregistrées</Text>
               <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.latestRow}>
@@ -850,23 +621,9 @@ export default function EcosystemDetailScreen({ route, navigation }) {
                 })}
               </ScrollView>
             </View>
-
-            <View style={styles.addMeasureRow}>
-              <TextInput
-                style={[styles.input, { color: colors.textPrimary, borderColor: colors.textSecondary }]}
-                keyboardType="decimal-pad"
-                value={newValue}
-                onChangeText={setNewValue}
-                placeholder={`Ajouter une valeur (${selectedParam})`}
-                placeholderTextColor={colors.textSecondary}
-              />
-              <TouchableOpacity onPress={addRecord} style={styles.addBtn} activeOpacity={0.7}>
-                <Ionicons name="add-circle" size={36} color={colors.accent} />
-              </TouchableOpacity>
-            </View>
           </View>
 
-          {/* Equipment section */}
+          {/* Equipment section (lecture seule) */}
           <View style={styles.cardSection}>
             <View style={styles.equipmentSection}>
               <View style={styles.sectionHeaderRow}>
@@ -889,80 +646,19 @@ export default function EcosystemDetailScreen({ route, navigation }) {
                         )}
                       </View>
                     </View>
-                    <TouchableOpacity
-                      onPress={() => delEquip(it.id)}
-                      style={styles.equipDeleteBtn}
-                      activeOpacity={0.7}
-                    >
-                      <Ionicons name="trash-outline" size={20} color={colors.red} />
-                    </TouchableOpacity>
                   </View>
                 ))
               )}
-
-              <View style={styles.addEquipContainer}>
-                <TouchableOpacity
-                  style={styles.addEquipBtn}
-                  onPress={() => {
-                    if (!showEquipInputs) setShowEquipInputs(true);
-                    else if (newEquip.name.trim()) addEquip();
-                    else Alert.alert('Erreur', 'Veuillez saisir le nom du matériel');
-                  }}
-                  activeOpacity={0.8}
-                >
-                  <Ionicons name={showEquipInputs ? 'checkmark' : 'add'} size={24} color={colors.accent} />
-                  <Text style={styles.addEquipBtnText}>
-                    {showEquipInputs ? 'Valider le matériel' : 'Ajouter du matériel'}
-                  </Text>
-                </TouchableOpacity>
-
-                {showEquipInputs && (
-                  <View style={styles.addEquipInputs}>
-                    <TextInput
-                      style={[styles.inputEquip, { color: colors.textPrimary, borderColor: colors.textSecondary }]}
-                      placeholder="Nom du matériel"
-                      value={newEquip.name}
-                      onChangeText={t => setNewEquip({ ...newEquip, name: t })}
-                      placeholderTextColor={colors.textSecondary}
-                    />
-                    <TextInput
-                      style={[styles.inputEquip, { color: colors.textPrimary, borderColor: colors.textSecondary }]}
-                      placeholder="Marque"
-                      value={newEquip.brand}
-                      onChangeText={t => setNewEquip({ ...newEquip, brand: t })}
-                      placeholderTextColor={colors.textSecondary}
-                    />
-                    <TextInput
-                      style={[styles.inputEquip, { color: colors.textPrimary, borderColor: colors.textSecondary }]}
-                      placeholder="Détails"
-                      value={newEquip.details}
-                      onChangeText={t => setNewEquip({ ...newEquip, details: t })}
-                      placeholderTextColor={colors.textSecondary}
-                    />
-                    <TouchableOpacity
-                      style={styles.cancelEquipBtn}
-                      onPress={() => {
-                        setNewEquip({ name: '', brand: '', details: '' });
-                        setShowEquipInputs(false);
-                      }}
-                      activeOpacity={0.8}
-                    >
-                      <Text style={styles.cancelEquipBtnText}>Annuler</Text>
-                    </TouchableOpacity>
-                  </View>
-                )}
-              </View>
             </View>
           </View>
 
-          {/* Habitants */}
+          {/* Habitants (lecture seule) */}
           <View style={styles.cardSection}>
             <View style={styles.inhabitantsSection}>
               <View style={styles.sectionHeaderRow}>
                 <Text style={styles.inhabitantsTitle}>Habitants</Text>
                 <View style={styles.sectionUnderline} />
               </View>
-
               {inhabitants.length === 0 ? (
                 <Text style={[styles.emptyChart, { color: '#2a9d8f' }]}>Aucun habitant ajouté.</Text>
               ) : (
@@ -972,46 +668,8 @@ export default function EcosystemDetailScreen({ route, navigation }) {
                       <MaterialCommunityIcons name="fish" size={22} color="#2a9d8f" style={{ marginRight: 8 }} />
                       <Text style={styles.habName} numberOfLines={1}>{h.name}</Text>
                     </View>
-                    <TouchableOpacity onPress={() => removeInhabitant(h.id)} style={styles.habDeleteBtn} activeOpacity={0.8}>
-                      <Ionicons name="trash-outline" size={18} color="#e63946" />
-                    </TouchableOpacity>
                   </View>
                 ))
-              )}
-
-              <View style={styles.addInhabitantRow}>
-                <TextInput
-                  style={[styles.input, { flex: 1, borderColor: '#cde7e2' }]}
-                  placeholder="Nom de l'habitant (ex : Rasbora Arlequin)"
-                  placeholderTextColor="#7aa9a3"
-                  value={newInhabitant}
-                  onChangeText={(text) => {
-                    setNewInhabitant(text);
-                    const list = SUGGESTIONS_BY_TYPE[eco.type] || [];
-                    const filtered = list.filter((s) => s.toLowerCase().includes(text.toLowerCase()));
-                    setFilteredSuggestions(filtered);
-                    setShowSuggestions(filtered.length > 0);
-                  }}
-                />
-                <TouchableOpacity onPress={addInhabitant} style={styles.addBtn} activeOpacity={0.8}>
-                  <Ionicons name="add-circle" size={36} color="#2a9d8f" />
-                </TouchableOpacity>
-              </View>
-              {showSuggestions && (
-                <View style={styles.suggestionsBox}>
-                  {filteredSuggestions.map((s, idx) => (
-                    <TouchableOpacity
-                      key={idx}
-                      style={styles.suggestionItem}
-                      onPress={() => {
-                        setNewInhabitant(s);
-                        setShowSuggestions(false);
-                      }}
-                    >
-                      <Text style={styles.suggestionText}>{s}</Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
               )}
             </View>
           </View>
@@ -1092,7 +750,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   scrollContent: {
-    paddingBottom: 40,
+    paddingBottom: 20,
     backgroundColor: 'transparent',
   },
   imageBannerContainer: {
@@ -1302,8 +960,8 @@ const styles = StyleSheet.create({
   },
   emptyChart: {
     textAlign: 'center',
-    marginVertical: 20,
-    fontSize: 16,
+    marginVertical: 10,
+    fontSize: 14,
   },
   addMeasureRow: {
     flexDirection: 'row',
@@ -1325,7 +983,7 @@ const styles = StyleSheet.create({
   },
   equipmentSection: {
     marginHorizontal: 20,
-    marginBottom: 40,
+    marginBottom: 20,
   },
   equipmentTitle: {
     fontWeight: '900',
@@ -1336,7 +994,7 @@ const styles = StyleSheet.create({
   equipCard: {
     backgroundColor: '#fff',
     borderRadius: 16,
-    paddingVertical: 14,
+    paddingVertical: 10,
     paddingHorizontal: 16,
     marginBottom: 12,
     flexDirection: 'row',
@@ -1497,7 +1155,7 @@ const styles = StyleSheet.create({
   },
   inhabitantsSection: {
     marginHorizontal: 20,
-    marginBottom: 40,
+    marginBottom: 20,
   },
   inhabitantsTitle: {
     fontWeight: '900',
@@ -1507,7 +1165,7 @@ const styles = StyleSheet.create({
   habCard: {
     backgroundColor: '#fff',
     borderRadius: 16,
-    paddingVertical: 12,
+    paddingVertical: 10,
     paddingHorizontal: 14,
     marginBottom: 10,
     flexDirection: 'row',

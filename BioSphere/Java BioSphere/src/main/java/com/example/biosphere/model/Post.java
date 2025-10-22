@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.ArrayList;
 
 @Entity
 @Table(name = "posts")
@@ -19,7 +20,7 @@ public class Post {
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @ElementCollection
-    private List<String> images;
+    private List<String> images = new ArrayList<>();
 
     // 👇 IMPORTANT : on ignore les sous-relations du user pour ne pas tout embarquer
     @ManyToOne(fetch = FetchType.LAZY)
@@ -29,9 +30,19 @@ public class Post {
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties({"post"}) // empêche la boucle post → comment → post
-    private List<Comment> comments;
+    private List<Comment> comments = new ArrayList<>();
 
-    // Getters & setters
+    // ✅ Relation des likes
+    @ManyToMany
+    @JoinTable(
+            name = "post_likes",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    @JsonIgnoreProperties({"posts", "comments", "ecosystems", "password"})
+    private List<User> likedBy = new ArrayList<>();
+
+    // --- Getters & Setters ---
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -52,4 +63,8 @@ public class Post {
 
     public List<Comment> getComments() { return comments; }
     public void setComments(List<Comment> comments) { this.comments = comments; }
+
+    // ✅ Getters / Setters manquants pour les likes
+    public List<User> getLikedBy() { return likedBy; }
+    public void setLikedBy(List<User> likedBy) { this.likedBy = likedBy; }
 }

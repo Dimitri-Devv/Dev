@@ -45,7 +45,7 @@ export default function TabRoutes({ route, navigation }) {
           headerTitle: () => (
             <Image
               source={require('../assets/logo.png')}
-              style={{ width: 120, height: 40, resizeMode: 'contain' }}
+              style={{ width: 180, height: 60, resizeMode: 'contain' }}
             />
           ),
           headerRight: () => (

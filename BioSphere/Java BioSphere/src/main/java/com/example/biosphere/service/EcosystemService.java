@@ -8,6 +8,7 @@ import com.example.biosphere.model.User;
 import com.example.biosphere.repository.EcosystemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 
@@ -34,10 +35,39 @@ public class EcosystemService {
         if (r.getName()!=null) e.setName(r.getName());
         if (r.getType()!=null) e.setType(r.getType());
         if (r.getPhotoUrl()!=null) e.setPhotoUrl(r.getPhotoUrl());
+        if (r.getSummaryParams() != null) {
+            e.setSummaryParams(r.getSummaryParams());
+        }
         return ecosystemRepository.save(e);
     }
 
-    public void deleteEcosystem(Long id){ ecosystemRepository.deleteById(id); }
+    @Transactional
+    public void deleteEcosystem(Long id) {
+        Ecosystem e = ecosystemRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Écosystème introuvable : " + id));
+
+        // ⚙️ Supprimer manuellement les entités liées (si ton repository les gère)
+        try {
+            // Exemple si tu as des repositories pour ces entités :
+            // equipmentRepository.deleteAllByEcosystem(e);
+            // parameterRecordRepository.deleteAllByEcosystem(e);
+            // inhabitantRepository.deleteAllByEcosystem(e);
+        } catch (Exception ex) {
+            throw new RuntimeException("Erreur lors du nettoyage des données associées : " + ex.getMessage());
+        }
+
+        // ✅ Supprimer l’écosystème une fois les relations nettoyées
+        ecosystemRepository.delete(e);
+    }
+
+
+    @Transactional
+    public Ecosystem updateSummaryParams(Long ecosystemId, List<String> summaryParams) {
+        Ecosystem eco = ecosystemRepository.findById(ecosystemId)
+            .orElseThrow(() -> new RuntimeException("Écosystème introuvable"));
+        eco.setSummaryParams(summaryParams);
+        return ecosystemRepository.save(eco);
+    }
 }
 
 

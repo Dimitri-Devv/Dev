@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useMemo, useState } from "react";
+import React, { useLayoutEffect, useCallback, useContext, useMemo, useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -13,6 +13,10 @@ import {
   ActivityIndicator,
   Platform,
   ScrollView,
+  Animated,
+  KeyboardAvoidingView,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useFocusEffect } from "@react-navigation/native";
@@ -131,122 +135,168 @@ function VideoPlayer({ uri }) {
   );
 }
 // 🧱 Carte d’un post
-function PostCard({ post, onOpenProfile, onLike, onComment, onMessage, colors }) {
+function PostCard({ post, onOpenProfile, onLike, onComment, onMessage, colors, user }) {
   // Permet d'utiliser un état local pour chaque vidéo
   const [playingStates, setPlayingStates] = useState({});
+  // Animation du coeur
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+  // Etat pour modal image plein écran
+  const [selectedImage, setSelectedImage] = useState(null); // string ou null
+  const [showImageModal, setShowImageModal] = useState(false);
 
+  const handleLike = () => {
+    Animated.sequence([
+      Animated.timing(scaleAnim, { toValue: 1.4, duration: 150, useNativeDriver: true }),
+      Animated.timing(scaleAnim, { toValue: 1, duration: 150, useNativeDriver: true }),
+    ]).start();
+    onLike(post.id);
+  };
+
+  // Ouvre la modal image
+  const openImageModal = (uri) => {
+    setSelectedImage(uri);
+    setShowImageModal(true);
+  };
+  // Ferme la modal image
+  const closeImageModal = () => {
+    setShowImageModal(false);
+    setSelectedImage(null);
+  };
+
+  // Pour l'effet d'ombre et espacement type Instagram
   return (
-    <View
-      style={[
-        styles.card,
-        { backgroundColor: colors.card, borderColor: colors.border },
-      ]}
-    >
-      {/* Auteur */}
-      <TouchableOpacity
-        style={styles.cardHeader}
-        onPress={() => {
-          Alert.alert(
-            "Profil utilisateur",
-            `Souhaitez-vous voir le profil de ${post.author?.username || "cet utilisateur"} ?`,
-            [
-              { text: "Non", style: "cancel" },
-              {
-                text: "Oui",
-                onPress: () => onOpenProfile(post.author),
-              },
-            ]
-          );
-        }}
-      >
-        <Image
-          source={{
-            uri:
-              post.author?.photoUrl ||
-              "https://cdn-icons-png.flaticon.com/512/149/149071.png",
-          }}
-          style={styles.avatar}
-        />
-        <View style={{ flex: 1 }}>
-          <Text style={[styles.author, { color: colors.text }]}>
-            {post.author?.username || "Anonyme"}
-          </Text>
-          <Text style={[styles.meta, { color: colors.muted }]}>
-            {post.typeLabel} ·{" "}
-            {new Date(post.createdAt).toLocaleString("fr-FR", {
-              dateStyle: "short",
-              timeStyle: "short",
-            })}
-          </Text>
-        </View>
-      </TouchableOpacity>
-
-      {/* Texte */}
-      {!!post.text && (
-        <Text style={[styles.postText, { color: colors.text }]}>
-          {post.text}
-        </Text>
-      )}
-
-      {/* Images / Vidéos */}
-      {post.images?.length > 0 && (
-        <View style={styles.imagesRow}>
-          {post.images.map((uri, idx) => {
-            if (!uri) return null;
-            const isVideo =
-              uri.includes("/video/") || uri.endsWith(".mp4") || uri.endsWith(".mov");
-            const cleanUri = uri.replace("http://", "https://");
-
-            if (isVideo) {
-              return <VideoPlayer key={`${post.id}-${idx}`} uri={cleanUri} />;
-            }
-
-            // Debug log
-            console.log("🖼️ Affichage média :", cleanUri);
-            return (
-              <Image
-                key={`${post.id}-${idx}`}
-                source={{ uri: cleanUri }}
-                style={styles.postImage}
-                resizeMode="cover"
-                onError={(e) =>
-                  console.warn("❌ Erreur affichage image :", cleanUri, e.nativeEvent.error)
-                }
-              />
+    <View style={styles.igCardShadow}>
+      <View style={[
+        styles.igCard,
+        { backgroundColor: colors.bg }
+      ]}>
+        {/* Auteur */}
+        <TouchableOpacity
+          style={styles.igCardHeader}
+          onPress={() => {
+            Alert.alert(
+              "Profil utilisateur",
+              `Souhaitez-vous voir le profil de ${post.author?.username || "cet utilisateur"} ?`,
+              [
+                { text: "Non", style: "cancel" },
+                {
+                  text: "Oui",
+                  onPress: () => onOpenProfile(post.author),
+                },
+              ]
             );
-          })}
+          }}
+        >
+          <Image
+            source={{
+              uri:
+                post.author?.photoUrl ||
+                "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+            }}
+            style={styles.igAvatar}
+          />
+          <View style={{ flex: 1 }}>
+            <Text style={[styles.igAuthor, { color: colors.text }]}>
+              {post.author?.username || "Anonyme"}
+            </Text>
+            <Text style={[styles.igMeta, { color: colors.muted }]}>
+              {post.typeLabel} ·{" "}
+              {new Date(post.createdAt).toLocaleString("fr-FR", {
+                dateStyle: "short",
+                timeStyle: "short",
+              })}
+            </Text>
+          </View>
+        </TouchableOpacity>
+
+        {/* Images / Vidéos */}
+        {post.images?.length > 0 && (
+          <View style={styles.igMediaWrap}>
+            {post.images.map((uri, idx) => {
+              if (!uri) return null;
+              const isVideo =
+                uri.includes("/video/") || uri.endsWith(".mp4") || uri.endsWith(".mov");
+              const cleanUri = uri.replace("http://", "https://");
+              if (isVideo) {
+                return <VideoPlayer key={`${post.id}-${idx}`} uri={cleanUri} />;
+              }
+              // Image : touche pour ouvrir modal
+              return (
+                <TouchableOpacity
+                  key={`${post.id}-${idx}`}
+                  activeOpacity={0.9}
+                  onPress={() => openImageModal(cleanUri)}
+                  style={{ flex: 1 }}
+                >
+                  <Image
+                    source={{ uri: cleanUri }}
+                    style={styles.igPostImage}
+                    resizeMode="cover"
+                    onError={(e) =>
+                      console.warn("❌ Erreur affichage image :", cleanUri, e.nativeEvent.error)
+                    }
+                  />
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        )}
+        {/* Modal image plein écran */}
+        <Modal visible={showImageModal && !!selectedImage} transparent animationType="fade">
+          <TouchableWithoutFeedback onPress={closeImageModal}>
+            <View style={styles.igImageModalOverlay}>
+              <Image
+                source={{ uri: selectedImage }}
+                style={styles.igImageModalImg}
+                resizeMode="contain"
+              />
+            </View>
+          </TouchableWithoutFeedback>
+        </Modal>
+        {/* Texte du post */}
+        {!!post.text && (
+          <View style={styles.igPostTextBox}>
+            <Text style={styles.igPostText}>{post.text}</Text>
+          </View>
+        )}
+        {/* Barre d’actions Instagram */}
+        <View style={styles.igActionsRow}>
+          <View style={styles.igActionsIcons}>
+            {/* Like animé */}
+            <TouchableOpacity onPress={handleLike} style={styles.igActionBtn}>
+              <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+                <Ionicons
+                  name={post.isLiked ? "heart" : "heart-outline"}
+                  size={30}
+                  color={post.isLiked ? "#e74c3c" : colors.text}
+                />
+              </Animated.View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => onComment(post)} style={styles.igActionBtn}>
+              <Ionicons name="chatbubble-outline" size={28} color={colors.text} />
+            </TouchableOpacity>
+            {post.author?.id !== user?.id && (
+              <TouchableOpacity onPress={() => onMessage(post.author)} style={styles.igActionBtn}>
+                <Ionicons name="paper-plane-outline" size={28} color={colors.text} />
+              </TouchableOpacity>
+            )}
+          </View>
+          <View style={styles.igActionsCounts}>
+            <Text style={[styles.igActionCount, { color: post.isLiked ? "#e74c3c" : colors.text }]}>
+              {post.likeCount} j’aime
+            </Text>
+            <Text style={[styles.igActionCount, { color: colors.text }]}>
+              {post.commentCount} commentaire{post.commentCount > 1 ? "s" : ""}
+            </Text>
+          </View>
         </View>
-      )}
-      {/* Barre d’actions */}
-      <View style={styles.actionsRow}>
-        <TouchableOpacity
-          style={styles.actionBtn}
-          onPress={() => onLike(post.id)}
-        >
-          <Ionicons name="heart-outline" size={20} color={colors.accent} />
-          <Text style={[styles.actionText, { color: colors.accent }]}>Like</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.actionBtn}
-          onPress={() => onComment(post)}
-        >
-          <Ionicons name="chatbubble-outline" size={20} color={colors.accent} />
-          <Text style={[styles.actionText, { color: colors.accent }]}>Commenter</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.actionBtn}
-          onPress={() => onMessage(post.author)}
-        >
-          <Ionicons name="paper-plane-outline" size={20} color={colors.accent} />
-          <Text style={[styles.actionText, { color: colors.accent }]}>MP</Text>
-        </TouchableOpacity>
       </View>
     </View>
   );
 }
 
 // 💬 MODAL COMMENTAIRES
-function CommentsModal({ visible, onClose, post, user, colors }) {
+function CommentsModal({ visible, onClose, post, user, colors, onNewComment }) {
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [commentText, setCommentText] = useState("");
@@ -286,6 +336,9 @@ function CommentsModal({ visible, onClose, post, user, colors }) {
         userId: user.id,
         text: commentText.trim(),
       });
+      if (post?.id && typeof onNewComment === "function") {
+        onNewComment(post.id);
+      }
       setCommentText("");
       fetchComments();
     } catch (err) {
@@ -296,81 +349,86 @@ function CommentsModal({ visible, onClose, post, user, colors }) {
 
   return (
     <Modal visible={visible} animationType="slide" transparent>
-      <View style={styles.modalCommentsOverlay}>
-        <View style={[styles.modalComments, { backgroundColor: colors.bg }]}>
-          <View style={styles.modalCommentsHeader}>
-            <Text style={[styles.modalCommentsTitle, { color: colors.text }]}>Commentaires</Text>
-            <TouchableOpacity onPress={onClose}>
-              <Ionicons name="close" size={26} color={colors.text} />
-            </TouchableOpacity>
-          </View>
-          <View style={styles.modalCommentsContent}>
-            {loading ? (
-              <ActivityIndicator color={colors.accent} style={{ marginTop: 20 }} />
-            ) : (
-              <FlatList
-                data={comments}
-                keyExtractor={(c) => String(c.id)}
-                renderItem={({ item }) => (
-                  <View style={styles.commentRow}>
-                    <Image
-                      source={{
-                        uri:
-                          item.author?.photoUrl ||
-                          "https://cdn-icons-png.flaticon.com/512/149/149071.png",
-                      }}
-                      style={styles.commentAvatar}
-                    />
-                    <View style={styles.commentBubble}>
-                      <Text style={[styles.commentAuthor, { color: colors.accent }]}>
-                        {item.author?.username || "Anonyme"}
-                      </Text>
-                      <Text style={[styles.commentText, { color: colors.text }]}>
-                        {item.text}
-                      </Text>
-                      <Text style={[styles.commentDate, { color: colors.muted }]}>
-                        {new Date(item.createdAt).toLocaleString("fr-FR", {
-                          dateStyle: "short",
-                          timeStyle: "short",
-                        })}
-                      </Text>
-                    </View>
-                  </View>
-                )}
-                ListEmptyComponent={
-                  <Text style={{ color: colors.muted, textAlign: "center", marginTop: 20 }}>
-                    Aucun commentaire.
-                  </Text>
-                }
-                contentContainerStyle={{ paddingBottom: 20 }}
-                showsVerticalScrollIndicator={false}
-              />
-            )}
-          </View>
-          <View style={styles.modalCommentsInputRow}>
-            <TextInput
-              style={[styles.modalCommentsInput, { color: colors.text, borderColor: colors.border }]}
-              placeholder="Ajouter un commentaire..."
-              placeholderTextColor={colors.muted}
-              value={commentText}
-              onChangeText={setCommentText}
-              editable={!sending}
-              multiline
-            />
-            <TouchableOpacity
-              style={styles.modalCommentsPublishBtn}
-              onPress={submitComment}
-              disabled={sending || !commentText.trim()}
-            >
-              {sending ? (
-                <ActivityIndicator color={colors.accent} size="small" />
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <KeyboardAvoidingView
+          style={styles.modalCommentsOverlay}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+        >
+          <View style={[styles.modalComments, { backgroundColor: colors.bg }]}>
+            <View style={styles.modalCommentsHeader}>
+              <Text style={[styles.modalCommentsTitle, { color: colors.text }]}>Commentaires</Text>
+              <TouchableOpacity onPress={onClose}>
+                <Ionicons name="close" size={26} color={colors.text} />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.modalCommentsContent}>
+              {loading ? (
+                <ActivityIndicator color={colors.accent} style={{ marginTop: 20 }} />
               ) : (
-                <Text style={{ color: colors.accent, fontWeight: "bold" }}>Publier</Text>
+                <FlatList
+                  data={comments}
+                  keyExtractor={(c) => String(c.id)}
+                  renderItem={({ item }) => (
+                    <View style={styles.commentRow}>
+                      <Image
+                        source={{
+                          uri:
+                            item.author?.photoUrl ||
+                            "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+                        }}
+                        style={styles.commentAvatar}
+                      />
+                      <View style={styles.commentBubble}>
+                        <Text style={[styles.commentAuthor, { color: colors.accent }]}>
+                          {item.author?.username || "Anonyme"}
+                        </Text>
+                        <Text style={[styles.commentText, { color: colors.text }]}>
+                          {item.text}
+                        </Text>
+                        <Text style={[styles.commentDate, { color: colors.muted }]}>
+                          {new Date(item.createdAt).toLocaleString("fr-FR", {
+                            dateStyle: "short",
+                            timeStyle: "short",
+                          })}
+                        </Text>
+                      </View>
+                    </View>
+                  )}
+                  ListEmptyComponent={
+                    <Text style={{ color: colors.muted, textAlign: "center", marginTop: 20 }}>
+                      Aucun commentaire.
+                    </Text>
+                  }
+                  contentContainerStyle={{ paddingBottom: 20 }}
+                  showsVerticalScrollIndicator={false}
+                />
               )}
-            </TouchableOpacity>
+            </View>
+            <View style={styles.modalCommentsInputRow}>
+              <TextInput
+                style={[styles.modalCommentsInput, { color: colors.text, borderColor: colors.border }]}
+                placeholder="Ajouter un commentaire..."
+                placeholderTextColor={colors.muted}
+                value={commentText}
+                onChangeText={setCommentText}
+                editable={!sending}
+                multiline
+              />
+              <TouchableOpacity
+                style={styles.modalCommentsPublishBtn}
+                onPress={submitComment}
+                disabled={sending || !commentText.trim()}
+              >
+                {sending ? (
+                  <ActivityIndicator color={colors.accent} size="small" />
+                ) : (
+                  <Text style={{ color: colors.accent, fontWeight: "bold" }}>Publier</Text>
+                )}
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      </View>
+        </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
     </Modal>
   );
 }
@@ -379,6 +437,64 @@ export default function CommunauteScreen({ route, navigation }) {
   const user = route?.params?.user;
   const { theme } = useContext(AppContext);
   const isDark = theme === "dark";
+
+  // Indicateur message non lu
+  const [hasUnreadMessages, setHasUnreadMessages] = useState(false);
+
+  useEffect(() => {
+    const checkUnreadMessages = async () => {
+      try {
+        const res = await api.get(`/community/messages/unread/${user?.id}`);
+        setHasUnreadMessages(res.data?.hasUnread || false);
+      } catch (err) {
+        console.warn("❌ Erreur récupération messages non lus :", err.message);
+        setHasUnreadMessages(false);
+      }
+    };
+
+    if (user?.id) {
+      checkUnreadMessages();
+      const interval = setInterval(checkUnreadMessages, 10000); // vérifie toutes les 10s
+      return () => clearInterval(interval);
+    }
+  }, [user?.id]);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity
+          style={{ marginRight: 15 }}
+          onPress={async () => {
+            try {
+              await api.post(`/community/messages/mark-read/${user.id}`);
+              setHasUnreadMessages(false);
+              navigation.navigate("Conversations", { user });
+            } catch (err) {
+              console.warn("❌ Erreur marquage messages lus :", err.message);
+              navigation.navigate("Conversations", { user });
+            }
+          }}
+        >
+          <View>
+            <Ionicons name="chatbubbles-outline" size={26} color="#2a9d8f" />
+            {hasUnreadMessages && (
+              <View
+                style={{
+                  position: "absolute",
+                  top: -3,
+                  right: -3,
+                  width: 10,
+                  height: 10,
+                  borderRadius: 5,
+                  backgroundColor: "red",
+                }}
+              />
+            )}
+          </View>
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation, user, hasUnreadMessages]);
 
   const colors = useMemo(
     () => ({
@@ -421,6 +537,11 @@ export default function CommunauteScreen({ route, navigation }) {
       const data = Array.isArray(res.data) ? res.data : [];
 
       const fixed = data.map((p) => {
+        const isLiked = Array.isArray(p.likedBy)
+          ? p.likedBy.some((u) => u.id === user?.id)
+          : false;
+        const likeCount = Array.isArray(p.likedBy) ? p.likedBy.length : 0;
+
         let images = [];
         if (Array.isArray(p.images)) images = p.images;
         else if (typeof p.images === "string") {
@@ -430,7 +551,8 @@ export default function CommunauteScreen({ route, navigation }) {
             images = [p.images];
           }
         }
-        return { ...p, typeLabel: typeLabel(p.type), images };
+        const commentCount = Array.isArray(p.comments) ? p.comments.length : 0;
+        return { ...p, typeLabel: typeLabel(p.type), images, isLiked, likeCount, commentCount };
       });
 
       setPosts(fixed);
@@ -518,9 +640,19 @@ export default function CommunauteScreen({ route, navigation }) {
 
   // Fonctions barre d’actions
   const onLike = async (postId) => {
+    setPosts((prev) =>
+      prev.map((p) =>
+        p.id === postId
+          ? {
+              ...p,
+              isLiked: !p.isLiked,
+              likeCount: p.isLiked ? p.likeCount - 1 : p.likeCount + 1,
+            }
+          : p
+      )
+    );
     try {
       await api.post(`/community/posts/${postId}/like`, { userId: user.id });
-      fetchPosts(); // rafraîchit la liste
     } catch (err) {
       console.log("❌ Erreur like :", err.message);
     }
@@ -536,8 +668,11 @@ export default function CommunauteScreen({ route, navigation }) {
   };
 
   const onMessage = (author) => {
-    navigation.navigate("Chat", { toUser: author });
-  };
+  navigation.navigate("Chat", {
+  toUser: author,          // la personne à qui on parle
+  currentUser: user        // toi-même
+});
+};
 
   return (
     <View style={[styles.container, { backgroundColor: colors.bg }]}>
@@ -593,6 +728,7 @@ export default function CommunauteScreen({ route, navigation }) {
             onComment={onComment}
             onMessage={onMessage}
             colors={colors}
+            user={user}
           />
         )}
         keyboardShouldPersistTaps="handled"
@@ -704,6 +840,15 @@ export default function CommunauteScreen({ route, navigation }) {
         post={selectedPost}
         user={user}
         colors={colors}
+        onNewComment={(postId) => {
+          setPosts((prev) =>
+            prev.map((p) =>
+              p.id === postId
+                ? { ...p, commentCount: (p.commentCount || 0) + 1 }
+                : p
+            )
+          );
+        }}
       />
 
       {/* Bouton flottant créer */}
@@ -729,29 +874,109 @@ const styles = StyleSheet.create({
     marginRight: 8,
     borderWidth: 1,
   },
-  card: {
-    borderRadius: 14,
-    padding: 12,
-    marginBottom: 16, // ✅ plus d’air entre les posts
-    borderWidth: 1,
+  // Instagram style post card
+  igCardShadow: {
+    marginBottom: 24,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.16,
+    shadowRadius: 8,
+    elevation: 6,
+    borderRadius: 18,
+    backgroundColor: "transparent",
   },
-  cardHeader: { flexDirection: "row", alignItems: "center", marginBottom: 8 },
-  avatar: { width: 36, height: 36, borderRadius: 18, marginRight: 10 },
-  author: { fontWeight: "700" },
-  meta: { fontSize: 12 },
-  postText: { fontSize: 15, marginBottom: 10 },
-  imagesRow: {
+  igCard: {
+    borderRadius: 18,
+    overflow: "hidden",
+    paddingBottom: 0,
+    backgroundColor: "#fff",
+  },
+  igCardHeader: {
     flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-    marginTop: 8,
-    marginBottom: 10,
+    alignItems: "center",
+    paddingHorizontal: 12,
+    paddingTop: 12,
+    paddingBottom: 8,
   },
-  postImage: {
+  igAvatar: { width: 38, height: 38, borderRadius: 19, marginRight: 10, backgroundColor: "#eee" },
+  igAuthor: { fontWeight: "bold", fontSize: 15 },
+  igMeta: { fontSize: 12, color: "#888" },
+  igMediaWrap: {
     width: "100%",
-    height: 260,
-    borderRadius: 12,
+    aspectRatio: 1,
     backgroundColor: "#111",
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
+    gap: 0,
+    minHeight: 260,
+    maxHeight: 420,
+    overflow: "hidden",
+  },
+  igPostImage: {
+    flex: 1,
+    width: "100%",
+    height: undefined,
+    aspectRatio: 1,
+    borderRadius: 0,
+    backgroundColor: "#111",
+    minHeight: 260,
+    maxHeight: 420,
+  },
+  igImageModalOverlay: {
+    flex: 1,
+    backgroundColor: "#000",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  igImageModalImg: {
+    width: "100%",
+    height: "100%",
+  },
+  igActionsRow: {
+    marginTop: 0,
+    paddingTop: 12,
+    paddingBottom: 0,
+    borderTopWidth: 0,
+    flexDirection: "column",
+    alignItems: "stretch",
+    paddingHorizontal: 12,
+  },
+  igActionsIcons: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 28,
+    marginBottom: 2,
+  },
+  igActionBtn: {
+    padding: 4,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  igActionsCounts: {
+    flexDirection: "row",
+    gap: 18,
+    justifyContent: "flex-start",
+    alignItems: "center",
+    marginTop: 2,
+    marginBottom: 0,
+    paddingLeft: 2,
+  },
+  igActionCount: {
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  igUsername: {
+    fontWeight: "bold",
+    fontSize: 15,
+    marginLeft: 12,
+    marginBottom: 2,
+  },
+  igPostText: {
+    fontSize: 15,
+    textAlign: "left",
+    color: "#2a2a2a",
   },
   playOverlay: {
     position: "absolute",
@@ -868,23 +1093,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  actionsRow: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    marginTop: 8,
-    borderTopWidth: 1,
-    borderColor: "#ddd",
-    paddingTop: 8,
-  },
-  actionBtn: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-  actionText: {
-    fontSize: 14,
-    fontWeight: "600",
-  },
   // 💬 Modal commentaires
   modalCommentsOverlay: {
     flex: 1,
@@ -987,8 +1195,24 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  igPostTextBox: {
+    backgroundColor: "#ffffff",
+    borderRadius: 14,
+    marginHorizontal: 12,
+    marginTop: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 4,
+    borderWidth: 1,
+    borderColor: "#e6e6e6",
+  },
 });
   
 
 
   
+ 

@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useContext } from "react";
-import { View, Text, TextInput, TouchableOpacity, FlatList, Modal, StyleSheet, Image, KeyboardAvoidingView, Platform } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet, Image, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import api from "./services/api";
 import { AppContext } from "../Ecrans/context/AppContext";
 
-export default function CommentsModal({ visible, onClose, post, user }) {
+export default function CommentsScreen({ post, user, navigation }) {
   const { theme } = useContext(AppContext);
   const isDark = theme === "dark";
   const [comments, setComments] = useState([]);
@@ -60,26 +60,28 @@ export default function CommentsModal({ visible, onClose, post, user }) {
   );
 
   return (
-    <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
+    <View style={[styles.container, { backgroundColor: colors.bg }]}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="close" size={24} color={colors.text} />
+        </TouchableOpacity>
+        <Text style={[styles.headerTitle, { color: colors.text }]}>Commentaires</Text>
+        <View style={{ width: 24 }} />
+      </View>
+
+      <FlatList
+        data={comments}
+        keyExtractor={(item) => String(item.id)}
+        renderItem={renderComment}
+        contentContainerStyle={{ padding: 16 }}
+        showsVerticalScrollIndicator={true}
+        style={{ flex: 1 }}
+        scrollEnabled={true}
+      />
+
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={[styles.modalContainer, { backgroundColor: colors.bg }]}
       >
-        <View style={styles.header}>
-          <TouchableOpacity onPress={onClose}>
-            <Ionicons name="close" size={24} color={colors.text} />
-          </TouchableOpacity>
-          <Text style={[styles.headerTitle, { color: colors.text }]}>Commentaires</Text>
-          <View style={{ width: 24 }} />
-        </View>
-
-        <FlatList
-          data={comments}
-          keyExtractor={(item) => String(item.id)}
-          renderItem={renderComment}
-          contentContainerStyle={{ padding: 16 }}
-        />
-
         <View style={[styles.inputRow, { borderColor: colors.border }]}>
           <TextInput
             style={[styles.input, { color: colors.text }]}
@@ -93,14 +95,13 @@ export default function CommentsModal({ visible, onClose, post, user }) {
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
-    </Modal>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  modalContainer: {
+  container: {
     flex: 1,
-    justifyContent: "flex-end",
   },
   header: {
     flexDirection: "row",

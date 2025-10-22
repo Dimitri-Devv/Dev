@@ -6,6 +6,7 @@ import com.example.biosphere.model.Ecosystem;
 import com.example.biosphere.model.ParameterRecord;
 import com.example.biosphere.repository.EcosystemRepository;
 import com.example.biosphere.repository.ParameterRecordRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,5 +30,9 @@ public class ParameterService {
         r.setMeasuredAt(req.getMeasuredAt()!=null ? req.getMeasuredAt() : LocalDateTime.now());
         return recordRepository.save(r);
     }
-}
 
+    @Transactional
+    public void deleteRecord(Long id) {
+        recordRepository.deleteById(id);
+    }
+}

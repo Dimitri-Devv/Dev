@@ -23,6 +23,11 @@ public class ParameterController {
         return parameterService.addRecord(req);
     }
 
+    @DeleteMapping("/history/{id}")
+    public void deleteRecord(@PathVariable Long id) {
+        parameterService.deleteRecord(id);
+    }
+
     public static class AddRecordRequest {
         private Long ecosystemId; private String name; private Double value; private LocalDateTime measuredAt;
         public Long getEcosystemId(){return ecosystemId;} public void setEcosystemId(Long ecosystemId){this.ecosystemId=ecosystemId;}
@@ -31,4 +36,3 @@ public class ParameterController {
         public LocalDateTime getMeasuredAt(){return measuredAt;} public void setMeasuredAt(LocalDateTime measuredAt){this.measuredAt=measuredAt;}
     }
 }
-

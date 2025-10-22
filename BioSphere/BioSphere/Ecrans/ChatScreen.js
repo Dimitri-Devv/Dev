@@ -1,14 +1,16 @@
-import React, { useContext, useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, FlatList } from 'react-native';
+import React, { useContext, useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, FlatList, KeyboardAvoidingView, Platform, SafeAreaView, Keyboard } from 'react-native';
 import { AppContext } from '../Ecrans/context/AppContext';
+import api from '../Ecrans/services/api';
 
 export default function ChatScreen({ route }) {
-  const { toUser } = route.params;
+  const { toUser, currentUser } = route.params; // 👈 Assure-toi que tu passes currentUser depuis la navigation
   const { theme } = useContext(AppContext);
   const isDark = theme === 'dark';
 
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const colors = {
     bg: isDark ? '#0f1113' : '#fff',
@@ -19,50 +21,100 @@ export default function ChatScreen({ route }) {
     accent: '#2a9d8f',
   };
 
-  const send = () => {
+  // 🔹 Charger la conversation au montage
+  useEffect(() => {
+    const fetchConversation = async () => {
+      try {
+        const res = await api.get(`/community/messages/${currentUser.id}/${toUser.id}`);
+        const sorted = res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        setMessages(sorted);
+      } catch (err) {
+        console.error('Erreur récupération messages :', err);
+      }
+    };
+    fetchConversation();
+  }, [toUser]);
+
+  // 🔹 Envoyer un message
+  const send = async () => {
     if (!text.trim()) return;
-    const msg = { id: Date.now(), text: text.trim(), mine: true };
-    setMessages(prev => [msg, ...prev]);
+
+    const tempMsg = {
+      id: Date.now(),
+      text: text.trim(),
+      sender: { id: currentUser.id },
+      receiver: { id: toUser.id },
+      mine: true,
+      createdAt: new Date().toISOString(),
+    };
+
+    setMessages(prev => [tempMsg, ...prev]);
     setText('');
+
+    try {
+      const res = await api.post('/community/messages/send', {
+        senderId: currentUser.id,
+        receiverId: toUser.id,
+        text: text.trim(),
+      });
+
+      // 🔹 Remplace le message temporaire par celui renvoyé par le backend
+      setMessages(prev => [res.data, ...prev.filter(m => m.id !== tempMsg.id)]);
+    } catch (err) {
+      console.error('Erreur envoi message :', err);
+    }
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.bg }]}>
-      <Text style={{ color: colors.text, textAlign:'center', marginVertical:10 }}>
-        Conversation avec {toUser.username || toUser.email}
-      </Text>
+    <SafeAreaView style={{ flex: 1 }}>
+      <KeyboardAvoidingView
+        style={[styles.container, { backgroundColor: colors.bg }]}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={120}
+        onTouchStart={() => Keyboard.dismiss()}
+      >
+        <Text style={{ color: colors.text, textAlign:'center', marginVertical:10 }}>
+          Conversation avec {toUser.username || toUser.email}
+        </Text>
 
-      <FlatList
-        data={messages}
-        keyExtractor={m => String(m.id)}
-        inverted
-        contentContainerStyle={{ padding: 16 }}
-        renderItem={({item}) => (
-          <View style={[
-            styles.bubble,
-            { alignSelf: item.mine ? 'flex-end' : 'flex-start',
-              backgroundColor: item.mine ? colors.accent : colors.card }
-          ]}>
-            <Text style={{ color: item.mine ? '#fff' : colors.text }}>{item.text}</Text>
-          </View>
-        )}
-      />
-
-      <View style={[styles.row, { borderTopColor: colors.border }]}>
-        <TextInput
-          value={text}
-          onChangeText={setText}
-          placeholder="Écrire un message…"
-          placeholderTextColor={colors.muted}
-          style={[styles.input, { color: colors.text }]}
+        <FlatList
+          data={messages}
+          keyExtractor={m => String(m.id)}
+          inverted
+          contentContainerStyle={{ padding: 16 }}
+          keyboardShouldPersistTaps="handled"
+          renderItem={({item}) => (
+            <View style={[
+              styles.bubble,
+              {
+                alignSelf: item.sender?.id === currentUser.id ? 'flex-end' : 'flex-start',
+                backgroundColor: item.sender?.id === currentUser.id ? colors.accent : colors.card
+              }
+            ]}>
+              <Text style={{ color: item.sender?.id === currentUser.id ? '#fff' : colors.text }}>
+                {item.text}
+              </Text>
+            </View>
+          )}
         />
-        <TouchableOpacity style={[styles.send, { backgroundColor: colors.accent }]} onPress={send}>
-          <Text style={{ color:'#fff', fontWeight:'700' }}>Envoyer</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+
+        <View style={[styles.row, { borderTopColor: colors.border }]}>
+          <TextInput
+            value={text}
+            onChangeText={setText}
+            placeholder="Écrire un message…"
+            placeholderTextColor={colors.muted}
+            style={[styles.input, { color: colors.text }]}
+          />
+          <TouchableOpacity style={[styles.send, { backgroundColor: colors.accent }]} onPress={send}>
+            <Text style={{ color:'#fff', fontWeight:'700' }}>Envoyer</Text>
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
+
 const styles = StyleSheet.create({
   container:{ flex:1 },
   bubble:{ padding:10, borderRadius:12, marginBottom:10, maxWidth:'80%' },
