@@ -241,7 +241,7 @@ export default function EcosystemesScreen({ route, navigation }) {
         Bienvenue {user?.username || user?.email} 👋
       </Text>
       <View style={{ alignItems: 'center', marginBottom: 15 }}>
-        <Text style={[styles.subtitle, { color: colors.accent, fontWeight: '700', fontSize: 18 }]}>
+        <Text style={[styles.subtitle, { color: colors.text, fontWeight: '700', fontSize: 18 }]}>
           🌿 Mes Écosystèmes
         </Text>
         <View style={{ width: 60, height: 3, backgroundColor: colors.accent, borderRadius: 3, marginTop: 4 }} />
