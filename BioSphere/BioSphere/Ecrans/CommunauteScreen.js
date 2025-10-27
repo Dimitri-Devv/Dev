@@ -262,7 +262,6 @@ function PostCard({ post, onOpenProfile, onLike, onComment, onMessage, colors, u
         {/* Barre d’actions Instagram */}
         <View style={styles.igActionsRow}>
           <View style={styles.igActionsIcons}>
-            {/* Like animé */}
             <TouchableOpacity onPress={handleLike} style={styles.igActionBtn}>
               <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
                 <Ionicons
@@ -271,23 +270,24 @@ function PostCard({ post, onOpenProfile, onLike, onComment, onMessage, colors, u
                   color={post.isLiked ? "#e74c3c" : colors.text}
                 />
               </Animated.View>
+              <Text style={styles.igActionCountSmall}>
+                {post.likeCount} j’aime
+              </Text>
             </TouchableOpacity>
+
             <TouchableOpacity onPress={() => onComment(post)} style={styles.igActionBtn}>
               <Ionicons name="chatbubble-outline" size={28} color={colors.text} />
+              <Text style={styles.igActionCountSmall}>
+                {post.commentCount} com.
+              </Text>
             </TouchableOpacity>
+
             {post.author?.id !== user?.id && (
               <TouchableOpacity onPress={() => onMessage(post.author)} style={styles.igActionBtn}>
                 <Ionicons name="paper-plane-outline" size={28} color={colors.text} />
+                <Text style={styles.igActionCountSmall}>Message</Text>
               </TouchableOpacity>
             )}
-          </View>
-          <View style={styles.igActionsCounts}>
-            <Text style={[styles.igActionCount, { color: post.isLiked ? "#e74c3c" : colors.text }]}>
-              {post.likeCount} j’aime
-            </Text>
-            <Text style={[styles.igActionCount, { color: colors.text }]}>
-              {post.commentCount} commentaire{post.commentCount > 1 ? "s" : ""}
-            </Text>
           </View>
         </View>
       </View>
@@ -934,44 +934,32 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   igActionsRow: {
-    marginTop: 0,
-    paddingTop: 12,
-    paddingBottom: 0,
-    borderTopWidth: 0,
-    flexDirection: "column",
-    alignItems: "stretch",
-    paddingHorizontal: 12,
+    paddingTop: 14,
+    paddingBottom: 6,
+    alignItems: "center",
+    justifyContent: "center",
   },
   igActionsIcons: {
     flexDirection: "row",
-    justifyContent: "center",
+    justifyContent: "space-around",
     alignItems: "center",
-    gap: 28,
-    marginBottom: 2,
+    width: "100%",
   },
   igActionBtn: {
-    padding: 4,
     alignItems: "center",
     justifyContent: "center",
-  },
-  igActionsCounts: {
-    flexDirection: "row",
-    gap: 18,
-    justifyContent: "flex-start",
-    alignItems: "center",
-    marginTop: 2,
-    marginBottom: 0,
-    paddingLeft: 2,
+    paddingHorizontal: 14,
   },
   igActionCount: {
     fontSize: 14,
     fontWeight: "600",
   },
-  igUsername: {
-    fontWeight: "bold",
-    fontSize: 15,
-    marginLeft: 12,
-    marginBottom: 2,
+  igActionCountSmall: {
+    fontSize: 12,
+    fontWeight: "600",
+    marginTop: 4,
+    color: "#666",
+    textAlign: "center",
   },
   igPostText: {
     fontSize: 15,
@@ -1100,7 +1088,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   modalComments: {
-    maxHeight: "78%",
+    height: "70%",
     borderTopLeftRadius: 18,
     borderTopRightRadius: 18,
     paddingHorizontal: 12,
@@ -1127,9 +1115,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   modalCommentsContent: {
-    flexGrow: 1,
-    minHeight: 120,
-    maxHeight: 260,
+    flex: 1,
     marginTop: 8,
     marginBottom: 8,
   },
