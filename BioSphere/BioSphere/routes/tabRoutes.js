@@ -2,6 +2,8 @@ import * as React from 'react';
 import { TouchableOpacity, Text, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useContext } from 'react';
+import { AppContext } from '../Ecrans/context/AppContext';
 
 import EcosystemesScreen from '../Ecrans/EcosystemesScreen';
 import CommunauteScreen from '../Ecrans/CommunauteScreen';
@@ -11,7 +13,13 @@ import ParametresScreen from '../Ecrans/ParametresScreen';
 const Tab = createBottomTabNavigator();
 
 export default function TabRoutes({ route, navigation }) {
-  const user = route?.params?.user; // ✅ utilisateur connecté
+  const { user } = useContext(AppContext);
+
+  // 🔐 Redirection si aucun utilisateur connecté
+  if (!user) {
+    navigation.replace("Auth");
+    return null;
+  }
 
   return (
     <Tab.Navigator
@@ -51,19 +59,14 @@ export default function TabRoutes({ route, navigation }) {
           headerRight: () => (
             <TouchableOpacity
               style={{ marginRight: 15 }}
-              onPress={() => navigation.navigate('AddEcosystem', { userId: user?.id })}
+              onPress={() => navigation.navigate('AddEcosystem')}
             >
               <Text style={{ fontSize: 28, color: '#2a9d8f' }}>＋</Text>
             </TouchableOpacity>
           ),
         }}
       >
-        {props => (
-          <EcosystemesScreen
-            {...props}
-            route={{ ...props.route, params: { user } }}
-          />
-        )}
+        {props => <EcosystemesScreen {...props} />}
       </Tab.Screen>
 
     
@@ -73,17 +76,12 @@ export default function TabRoutes({ route, navigation }) {
         name="Profil"
         options={{ headerTitle: 'Mon profil' }}
       >
-        {props => (
-          <ProfilScreen
-            {...props}
-            route={{ ...props.route, params: { user } }}
-          />
-        )}
+        {props => <ProfilScreen {...props} />}
       </Tab.Screen>
 
  {/* --- Communaute --- */}
       <Tab.Screen name="Communauté">
-  {props => <CommunauteScreen {...props} route={{ ...props.route, params: { user } }} />}
+        {props => <CommunauteScreen {...props} />}
       </Tab.Screen>
 
 

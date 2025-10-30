@@ -7,6 +7,7 @@ export const AppContext = createContext();
 export const AppProvider = ({ children }) => {
   const [theme, setTheme] = useState(Appearance.getColorScheme() || 'light');
   const [language, setLanguage] = useState('fr');
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const loadPrefs = async () => {
@@ -15,6 +16,8 @@ export const AppProvider = ({ children }) => {
         const savedLang = await AsyncStorage.getItem('language');
         if (savedTheme) setTheme(savedTheme);
         if (savedLang) setLanguage(savedLang);
+        const storedUser = await AsyncStorage.getItem('user');
+        if (storedUser) setUser(JSON.parse(storedUser));
       } catch (err) {
         console.log('Erreur chargement préférences', err);
       }
@@ -34,6 +37,16 @@ export const AppProvider = ({ children }) => {
     await AsyncStorage.setItem('language', newLang);
   };
 
+  const loginUser = async (userData) => {
+    setUser(userData);
+    await AsyncStorage.setItem('user', JSON.stringify(userData));
+  };
+
+  const logoutUser = async () => {
+    setUser(null);
+    await AsyncStorage.removeItem('user');
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -41,6 +54,9 @@ export const AppProvider = ({ children }) => {
         toggleTheme,
         language,
         toggleLanguage,
+        user,
+        setUser: loginUser,
+        logoutUser,
       }}
     >
       {children}

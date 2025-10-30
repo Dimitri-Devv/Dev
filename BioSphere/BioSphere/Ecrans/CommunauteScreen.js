@@ -434,7 +434,7 @@ function CommentsModal({ visible, onClose, post, user, colors, onNewComment }) {
 }
 
 export default function CommunauteScreen({ route, navigation }) {
-  const user = route?.params?.user;
+  const { user } = useContext(AppContext);
   const { theme } = useContext(AppContext);
   const isDark = theme === "dark";
 
@@ -723,7 +723,7 @@ export default function CommunauteScreen({ route, navigation }) {
         renderItem={({ item }) => (
           <PostCard
             post={item}
-            onOpenProfile={(author) => navigation.navigate("ProfilPublic", { user: author })}
+            onOpenProfile={(author) => navigation.navigate("ProfilPublic", { author })}
             onLike={onLike}
             onComment={onComment}
             onMessage={onMessage}

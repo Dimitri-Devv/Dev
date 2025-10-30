@@ -14,21 +14,45 @@ import {
   Keyboard,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from "@expo/vector-icons";
 import api from './services/api';
+import { useContext } from 'react';
+import { AppContext } from './context/AppContext';
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const { setUser } = useContext(AppContext);
 
   // Connexion simple
   const handleLogin = async () => {
     if (!email || !password) return Alert.alert('Erreur', 'Veuillez remplir tous les champs');
     try {
       const res = await api.post('/auth/login', { email, password });
-      navigation.replace('Main', { user: res.data });
+      console.log("Réponse Login:", res.data);
+      setUser(res.data);
+      navigation.replace('Main');
     } catch (err) {
-      console.error(err);
-      Alert.alert('Erreur', 'Email ou mot de passe incorrect');
+      console.error(err?.response?.data);
+
+      const errorMessage = err?.response?.data?.error;
+
+      if (errorMessage?.includes("non vérifié")) {
+        Alert.alert(
+          "Email non vérifié",
+          "Veuillez vérifier votre email avant de vous connecter.",
+          [
+            { text: "OK" },
+            {
+              text: "Vérifier maintenant",
+              onPress: () => navigation.navigate('VerifyEmail', { email }),
+            },
+          ]
+        );
+      } else {
+        Alert.alert('Erreur', errorMessage || 'Email ou mot de passe incorrect');
+      }
     }
   };
 
@@ -78,14 +102,26 @@ export default function LoginScreen({ navigation }) {
               value={email}
               onChangeText={setEmail}
             />
-            <TextInput
-              style={styles.input}
-              placeholder="Mot de passe"
-              placeholderTextColor="#999"
-              secureTextEntry
-              value={password}
-              onChangeText={setPassword}
-            />
+            <View style={{ width: '100%', position: 'relative' }}>
+              <TextInput
+                style={styles.input}
+                placeholder="Mot de passe"
+                placeholderTextColor="#999"
+                secureTextEntry={!showPassword}
+                value={password}
+                onChangeText={setPassword}
+              />
+              <TouchableOpacity
+                onPress={() => setShowPassword(prev => !prev)}
+                style={{ position: 'absolute', right: 15, top: 18 }}
+              >
+                <Ionicons
+                  name={showPassword ? "eye-off-outline" : "eye-outline"}
+                  size={22}
+                  color="#2a9d8f"
+                />
+              </TouchableOpacity>
+            </View>
 
             <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
               <Text style={styles.loginText}>Se connecter</Text>

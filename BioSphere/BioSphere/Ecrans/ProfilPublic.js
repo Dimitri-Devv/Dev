@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { View, Text, Image, StyleSheet, FlatList, ActivityIndicator, ScrollView, TouchableOpacity } from "react-native";
 import * as Animatable from 'react-native-animatable';
 import { LinearGradient } from 'expo-linear-gradient';
 import api from "./services/api"; 
+import { AppContext } from "./context/AppContext";
 
 const ecosystemTypeLabels = {
   eau_douce: "Aquarium d’eau douce",
@@ -13,7 +14,8 @@ const ecosystemTypeLabels = {
 };
 
 export default function ProfilPublic({ route, navigation }) {
-  const { user } = route.params || {};
+  const { author } = route.params || {};
+  const { user } = useContext(AppContext);
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -24,10 +26,10 @@ export default function ProfilPublic({ route, navigation }) {
       setError(null);
       try {
         let response;
-        if (user?.id) {
-          response = await api.get(`/community/users/${user.id}`);
-        } else if (user?.username) {
-          response = await api.get(`/community/users/username/${user.username}`);
+        if (author?.id) {
+          response = await api.get(`/community/users/${author.id}`);
+        } else if (author?.username) {
+          response = await api.get(`/community/users/username/${author.username}`);
         } else {
           setError("Aucun identifiant utilisateur fourni.");
           setLoading(false);
@@ -46,7 +48,7 @@ export default function ProfilPublic({ route, navigation }) {
       }
     };
     fetchUserData();
-  }, [user]);
+  }, [author]);
 
   if (loading) {
     return (

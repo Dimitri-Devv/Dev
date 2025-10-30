@@ -22,6 +22,7 @@ public class User {
     private String phone;
     private String photoUrl;
     private String username; // 👈 Nouveau champ
+    private boolean emailVerified = false;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonManagedReference
@@ -57,4 +58,7 @@ public class User {
 
     public List<Ecosystem> getEcosystems() { return ecosystems; }
     public void setEcosystems(List<Ecosystem> ecosystems) { this.ecosystems = ecosystems; }
+
+    public boolean isEmailVerified() { return emailVerified; }
+    public void setEmailVerified(boolean emailVerified) { this.emailVerified = emailVerified; }
 }

@@ -8,6 +8,7 @@ import { LogBox } from "react-native";
 import { AppProvider } from "./Ecrans/context/AppContext";
 import RegisterScreen from "./Ecrans/RegisterScreen";
 import LoginScreen from "./Ecrans/LoginScreen";
+import ChangePasswordScreen from "./Ecrans/ChangePasswordScreen";
 import ConversationsScreen from "./Ecrans/ConversationScreen";
 import AddEcosystemScreen from "./Ecrans/AddEcosystemScreen";
 import TabRoutes from "./routes/tabRoutes";
@@ -16,6 +17,7 @@ import CommentsScreen from "./Ecrans/CommentsScreen";
 import ChatScreen from "./Ecrans/ChatScreen";
 import ProfilPublic from "./Ecrans/ProfilPublic";
 import EcosystemPublicScreen from "./Ecrans/EcosystemPublicScreen";
+import VerifyEmailScreen from "./Ecrans/VerifyEmailScreen";
 
 // ✅ ignore un warning non bloquant de React Native
 LogBox.ignoreLogs(["Text strings must be rendered within a <Text> component"]);
@@ -79,6 +81,16 @@ export default function App() {
             component={ConversationsScreen}
             options={{ title: "Messages privés" }}
           />
+          <Stack.Screen
+      name="VerifyEmail"
+      component={VerifyEmailScreen}
+      options={{ headerShown: false }}
+/>
+<Stack.Screen
+  name="ChangePassword"
+  component={ChangePasswordScreen}
+  options={{ title: "Modifier le mot de passe" }}
+/>
         </Stack.Navigator>
       </NavigationContainer>
     </AppProvider>

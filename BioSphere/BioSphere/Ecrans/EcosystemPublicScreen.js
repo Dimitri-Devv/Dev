@@ -17,7 +17,7 @@ import {
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { LineChart } from 'react-native-chart-kit';
 import api from './services/api';
-import { AppContext } from '../Ecrans/context/AppContext';
+import { AppContext } from './context/AppContext';
 
 // Icônes des paramètres
 const ICONS = {

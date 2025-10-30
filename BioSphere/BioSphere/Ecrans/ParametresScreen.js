@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
-import { AppContext } from '../Ecrans/context/AppContext';
+import { AppContext } from './context/AppContext';
 
 export default function ParametresScreen({ navigation }) {
   const { theme, toggleTheme, language, toggleLanguage } = useContext(AppContext);

@@ -4,10 +4,10 @@ import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import api from './services/api';
-import { AppContext } from '../Ecrans/context/AppContext';
+import { AppContext } from './context/AppContext';
 
 export default function EcosystemesScreen({ route, navigation }) {
-  const user = route.params?.user;
+  const { user } = useContext(AppContext);
   const [ecosystems, setEcosystems] = useState([]);
   const [loading, setLoading] = useState(false);
 

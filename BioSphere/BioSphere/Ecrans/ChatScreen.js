@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, FlatList, KeyboardAvoidingView, Platform, SafeAreaView, Keyboard } from 'react-native';
-import { AppContext } from '../Ecrans/context/AppContext';
-import api from '../Ecrans/services/api';
+import { AppContext } from './context/AppContext';
+import api from './services/api';
 
 export default function ChatScreen({ route }) {
-  const { toUser, currentUser } = route.params; // 👈 Assure-toi que tu passes currentUser depuis la navigation
-  const { theme } = useContext(AppContext);
+  const { toUser } = route.params;
+  const { user: currentUser, theme } = useContext(AppContext);
   const isDark = theme === 'dark';
 
   const [messages, setMessages] = useState([]);

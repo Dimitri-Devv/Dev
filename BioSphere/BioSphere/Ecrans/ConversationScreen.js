@@ -2,11 +2,10 @@
 import React, { useEffect, useState, useContext } from "react";
 import { View, Text, TouchableOpacity, FlatList, Image, StyleSheet, ActivityIndicator } from "react-native";
 import api from "./services/api";
-import { AppContext } from "../Ecrans/context/AppContext";
+import { AppContext } from "./context/AppContext";
 
-export default function ConversationsScreen({ navigation, route }) {
-  const { user } = route.params;
-  const { theme } = useContext(AppContext);
+export default function ConversationsScreen({ navigation }) {
+  const { user, theme } = useContext(AppContext);
   const isDark = theme === "dark";
   const [loading, setLoading] = useState(true);
   const [conversations, setConversations] = useState([]);
@@ -51,7 +50,6 @@ export default function ConversationsScreen({ navigation, route }) {
             onPress={() =>
               navigation.navigate("Chat", {
                 toUser: item.otherUser,
-                currentUser: user,
               })
             }
           >

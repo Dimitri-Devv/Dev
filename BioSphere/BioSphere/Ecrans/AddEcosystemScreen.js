@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, Alert, StyleSheet, Image } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Picker } from '@react-native-picker/picker';
-import { AppContext } from '../Ecrans/context/AppContext';
+import { AppContext } from './context/AppContext';
 
 const TYPE_OPTIONS = [
   { label: 'Eau douce', value: 'eau_douce' },
@@ -13,7 +13,8 @@ const TYPE_OPTIONS = [
 ];
 
 export default function AddEcosystemScreen({ navigation, route }) {
-  const userId = route?.params?.userId ?? null;
+  const { user } = useContext(AppContext);
+  const userId = user?.id;
   const [name, setName] = useState('');
   const [type, setType] = useState(TYPE_OPTIONS[0].value);
   const [photoUri, setPhotoUri] = useState(null);
