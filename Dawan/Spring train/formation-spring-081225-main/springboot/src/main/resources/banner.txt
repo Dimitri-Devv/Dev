@@ -1,0 +1,10 @@
+${AnsiBackground.RED}${AnsiColor.255}${AnsiStyle.BOLD}  _____                            
+ |  __ \                           
+ | |  | | __ ___      ____ _ _ __  
+ | |  | |/ _` \ \ /\ / / _` | '_ \ 
+ | |__| | (_| |\ V  V / (_| | | | |
+ |_____/ \__,_| \_/\_/ \__,_|_| |_|
+                                   
+${AnsiBackground.DEFAULT}${AnsiColor.DEFAULT}${AnsiStyle.NORMAL}
+   version: ${application.version}
+
