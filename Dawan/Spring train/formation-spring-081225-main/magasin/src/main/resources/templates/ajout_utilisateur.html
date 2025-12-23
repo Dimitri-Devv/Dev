@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+        th:replace="~{main-layout::main-fragment(~{::title},~{::#ajout-utilisateur-main-content})}"
+>
+<head>
+<meta charset="UTF-8">
+<title>Ajouter un utilisateur</title>
+</head>
+<body>
+    <div class="container-fluid" id="ajout-utilisateur-main-content">
+        <h1 class="text-center">Ajouter un utilisateur </h1>
+        <form method="post" th:action="@{/admin/users/add}" th:object="${userForm}">
+            <div class="mt-2">
+                <label for="prenom" class="form-label">Prénom</label>
+                <input type="text" class="form-control" id="prenom" th:field="*{prenom}" th:errorclass="is-invalid"/>
+                <p  th:errors="*{prenom}" class="invalid-feedback"/>
+            </div>
+            <div class="mt-2">
+                <label for="nom" class="form-label">Nom</label>
+                <input type="text" class="form-control" id="nom" th:field="*{nom}" th:errorclass="is-invalid"/>
+                 <p  th:errors="*{nom}" class="invalid-feedback"/>
+            </div>
+            <div class="mt-2">
+                <label for="adresse" class="form-label">Adresse</label>
+                <input type="text" class="form-control" id="adresse" th:field="*{adresse}" th:errorclass="is-invalid"/>
+                 <p th:errors="*{adresse}" class="invalid-feedback"/>
+            </div>
+            <div class="mt-2">
+                <label for="dateNaissance" class="form-label">Date de Naissance</label>
+                <input type="date" class="form-control" id="dateNaissance" th:field="*{dateNaissance}" th:errorclass="is-invalid"/>
+                <p  th:errors="*{dateNaissance}" class="invalid-feedback"/>
+            </div>
+            <div class="mt-2">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" th:field="*{email}" th:errorclass="is-invalid"/>
+                 <p  th:errors="*{email}" class="invalid-feedback"/>
+            </div>
+            <div class="mt-2">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" th:field="*{password}" th:errorclass="is-invalid"/>
+                <p th:errors="*{password}" class="invalid-feedback"/>
+            </div>
+            <input class="btn btn-primary mt-2" type="submit" value="Ajouter" />
+        </form>
+    </div>
+</body>
+</html>

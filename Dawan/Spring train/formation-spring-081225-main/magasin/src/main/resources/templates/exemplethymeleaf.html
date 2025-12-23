@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+        th:replace="~{main-layout::main-fragment(~{::title},~{::#thymeleaf-main-content})}">
+<head>
+<meta charset="UTF-8">
+<title>Exemple Thymeleaf</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.8/css/bootstrap.min.css}"/>
+</head>
+<body>
+<div class="container-fluid" id="thymeleaf-main-content">
+    <div class="alert alert-primary col-md-4" th:text="${val}">text statique</div>
+    
+    <h4 class="mt-2">Accès à un objet</h4>
+    <div th:text="${utilisateur.prenom}">prenom</div>
+    <div th:text="${utilisateur['nom']}">nom</div>
+    <div th:text="'prenom=' + ${utilisateur.prenom} + ' nom=' + ${utilisateur.nom}">utilisateur</div>
+    <div th:text="|prénom=${utilisateur.prenom} nom=${utilisateur.nom}|"></div>
+    
+    <h4 class="mt-2">Accès à un tableau</h4>
+    <div th:text="${tab[2]}">element du tableau</div>
+    
+    <h4 class="mt-2">Accès à une map</h4>
+    <div th:text="${ages['Jane']}"></div>
+    <div th:text="${ages.Yves}"></div>
+    
+    <h4 class="mt-2">URL</h4>
+    <div><a th:href="@{/testmodel}">Exemple test model</a></div>
+    <div><a th:href="@{/testparam(id=${val})}">Exemple paramètre de requète</a></div>
+    <div><a th:href="@{/testparam(id=${val},nom=${utilisateur.nom})}">Exemple paramètre multiple de requète</a></div>
+    <div><a th:href="@{/testpath/{va}(va=${val})}">Exemple paramètre de chemin</a></div>
+    <div><a th:href="@{/testpath/{prenom}/{nom}(prenom=${utilisateur.prenom},nom=${utilisateur.nom})}">Exemple paramètre multiple de chemin</a></div>
+    
+    <h4 class="mt-2">Condition if</h4>
+    <div  th:if="${val>50}" class="alert alert-secondary">
+        <p>val est supérieur à 50</p>
+    </div>
+    <div  th:unless="${val>50}" class="alert alert-danger">
+        <p>val est inférieur à 50</p>
+    </div>
+    
+    <h4 class="mt-2">Opérateur Conditionnel</h4>
+    <div th:text="${val>0} ? ${val*10}"></div>
+    <div th:text="${val==40} ? ${val*2}:'val n\'est pas égal à 4'"></div>
+    <div th:text="${existepas}?:'valeur par défaut'"></div>
+   
+    <h4 class="mt-2">Condition switch</h4>
+    <div th:switch="${val}">
+        <p th:case="30">égal à 30</p>
+        <p th:case="40">égal à 40</p>
+        <p th:case="${v1}">égal à v1</p>
+        <p th:case="*">Une aute valeur</p>
+    </div>
+   
+    <h4 class="mt-2">_ token no operation</h4>
+    <div th:text="${val>0}? 'val est supérieur à 0': _"></div>
+    
+    <h4 class="mt-2">Boucle</h4>
+    <ul>
+        <li th:each="t : ${tab}" th:text="${t}"></li>
+    </ul>
+    <ul>
+        <li th:each="t,statusVar : ${tab}" th:text="|tab[${statusVar.index}] ${t}  ${statusVar.count}/${statusVar.size} |" ></li>
+    </ul>
+    <th:block th:each="t,st : ${tab}">
+        <p th:text="|tab[${st.index}] ${t}  ${st.count}/${st.size} |" th:class="${st.odd}?'text-primary':'text-secondary'"></p>
+    </th:block>
+    
+    <h4 class="mt-2">Fragment</h4>
+    <div th:insert="~{exempletemplate::exemplefooter}"></div>
+    <div th:replace="~{exempletemplate::exemplefooter}"></div>
+    
+    <h4 class="mt-2">Utility expression</h4>
+    <div th:text="${#temporals.year(datejour)}"></div>
+    <div th:text="${#strings.capitalize(phrase)}"></div>
+    <div th:text="${#strings.length(phrase)}"></div>
+  </div>  
+</body>
+</html>

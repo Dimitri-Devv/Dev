@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+        th:replace="~{main-layout::main-fragment(~{::title},~{::#presentation-main-content})}"
+>
+<head>
+<meta charset="UTF-8">
+<title>Présentation</title>
+</head>
+<body>
+    <div class="container-fluid" id="presentation-main-content">
+        <div class="alert alert-primary" th:if="${prenom!= null and nom!=null}"th:text="|Bonjour, ${prenom} ${nom}|">Salutation</div>
+<!--         <div><a th:href="@{/presentation/path/yves/roulo}">Salutation</a></div> -->
+         <div class="my-2"><a th:href="@{/presentation/path/{pr}/{no}(pr=yves, no=roulo)}">Salutation yves roulo</a></div>
+         <div class="my-2"><a th:href="@{/presentation/param(prenom=alan, nom=smithee)}">Salutation alan smithee</a></div>
+         <form method="post" th:action="@{/presentation/param}">
+            <div class="col-md-6">
+                <label class="form-label" for="prenom">Prénom</label>
+                <input class="form-control" type="text" name="prenom" id="prenom" />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="nom">Nom</label>
+                <input class="form-control" type="text" name="nom" id="nom" />
+            </div>
+            <input class="btn btn-primary my-3 col-md-6" type="submit" value="Salutation" />
+         </form>
+         
+    </div>
+</body>
+</html>

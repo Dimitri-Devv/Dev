@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+        th:replace="~{main-layout::main-fragment(~{::title},~{::#error500-main-content})}">
+<head>
+<meta charset="UTF-8">
+<title>Erreur 500</title>
+</head>
+<body>
+    <div class="container-fluid" id="error500-main-content">
+        <div class="display-1 text-center my-5 text-primary">Erreur 500</div>
+    </div>
+</body>
+</html>

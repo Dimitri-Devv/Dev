@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+        th:replace="~{main-layout::main-fragment(~{::title},~{::#exemple-main-content})}"
+>
+<head>
+<meta charset="UTF-8">
+<title>Exemple</title>
+</head>
+<body>
+    <div class="container-fluid" id="exemple-main-content">
+        <div class="alert alert-primary col-md-6" th:text="${msg}" th:if="${msg}">Le message</div>
+        <h4>Controlleur</h4>
+        <ul>
+            <li><a th:href="@{/exemple}">Exemple</a></li>
+            <li><a th:href="@{/exemple/testmodel}">Exemple Model</a></li>
+            <li><a th:href="@{/exemple/testmodelandview}">Exemple ModelAndView</a></li>
+        </ul>
+        <h4>RequestMapping</h4>
+        <ul>
+            <li><a th:href="@{/exemple/testparams(id=42)}">url avec un paramètre id</a></li>
+            <li><a class="text-danger" th:href="@{/exemple/testparams}">url sans paramètre -> erreur</a></li>
+            <li><a th:href="@{/exemple/testparamsvalue(id=21)}">url avec un paramètre id=21</a></li>
+            <li><a class="text-danger" th:href="@{/exemple/testparamsvalue(id=42)}">url avec un paramètre id=42 -> erreur</a></li>
+        </ul>
+        <h4>PathVariable</h4>
+        <ul>
+            <li><a th:href="@{/exemple/testpath/2}">url avec un paramètre de chemin id=2</a></li>
+            <li><a th:href="@{/exemple/testpathmulti/21/john}">url avec un paramètre de chemin id=21 nom=john</a></li>
+            <li><a th:href="@{/exemple/testpathamb/42}">url avec un paramètre de chemin id=42</a></li>
+            <li><a th:href="@{/exemple/testpathamb/marcel}">url avec un paramètre de chemin nom=marcel</a></li>
+        </ul>
+        <h4>RequestParam</h4>
+        <ul>
+             <li><a th:href="@{/exemple/testparam(id=45)}">url avec un paramètre de requête id=45</a></li>
+             <li><a th:href="@{/exemple/testparammulti(id=4,nom=smithee)}">url avec un paramètre de requête id=4 nom=smithee</a></li>
+             <li><a th:href="@{/exemple/testparammap(id=5,nom=doe)}">url avec un paramètre de requête id=5 nom=doe</a></li>
+             <li><a th:href="@{/exemple/testparamamb(id=6)}">url avec un paramètre de requête id=6</a></li>
+             <li><a th:href="@{/exemple/testparamamb(nom=dalton)}">url avec un paramètre de requête nom=dalton</a></li>
+        </ul>
+        <h4>Attribut PathVariable et RequestParam</h4>
+        <ul>
+             <li><a th:href="@{/exemple/testpathop/54}">url avec un paramètre optionnel de chemin id=54</a></li>
+             <li><a th:href="@{/exemple/testpathop}">url sans paramètre optionnel de chemin</a></li>
+             <li><a th:href="@{/exemple/testpathop2/54}">url avec un paramètre optionnel (Optional) de chemin id=54</a></li>
+             <li><a th:href="@{/exemple/testpathop2}">url sans paramètre optionnel (Optional) de chemin</a></li>
+             <li><a th:href="@{/exemple/testparamdefault}">url avec un paramètre de requête avec une valeur par défaut</a></li>
+             <li><a th:href="@{/exemple/testparamdefault(nom=qwerty)}">url avec un paramètre de requête nom=qwerty</a></li>
+        </ul>
+        <ul class="list-group">
+            <li th:each="e : ${headers}" th:text="${e}" class="list-group-item"></li>
+        </ul>
+         <h4>Conversion de paramètre</h4>
+         <ul>
+              <li><a th:href="@{/exemple/testconv/11}">conversion paramètre: int</a></li>
+              <li><a th:href="@{/exemple/testconvdate/24-06-2025}">conversion paramètre: date</a></li> 
+              <li><a th:href="@{/exemple/testpathbind/5/john/doe}">bind javabean pathvariable</a>
+              <li><a th:href="@{/exemple/testparambind(id=6,prenom=jane,nom=doe)}">bind javabean requestparam</a>
+          </ul>
+         <h4>Redirection et FlashAttribute</h4>
+         <ul>
+             <li><a class="my-2" th:href="@{/exemple/testredirect}" >Test redirection(redirect) hello world</a></li>
+             <li><a class="my-2" th:href="@{/exemple/testforward}" >Test redirection(forward) hello world</a></li>
+        </ul>
+        <h4>Repository</h4>
+        <ul>
+            <li><a th:href="@{/users/Hardy}">User en fonction du nom /users/Hardy</a></li>
+            <li><a th:href="@{/users/idmax/5}">User avec un id >5 /users/idmax/5</a></li>
+            <li><a th:href="@{/users/1970-01-01/1975-01-01}">User en fonction d'un interval de date de naissance /users/1970-01-01/1975-01-01</a></li>
+            <li><a th:href="@{/users/nom/Citeaux/Moos}">User en fonction d'un interval de nom /users/nom/Citeaux/Moos</a></li>
+            <li><a th:href="@{/users/nom/Lincoln/date/1970-01-01}">User en fonction d'un nom minimum et d'une date naissance maximum /users/nom/Lincoln/date/1970-01-01</a></li>
+            <li><a th:href="@{/users/email/gmail.com}">User dont le mail fini par gmail.com /users/email/gmail.com</a></li> 
+            <li><a th:href="@{/users/prenomlike}">User dont la 2ème lettre du prénom est a /users/prenomlike</a></li> 
+            <li><a th:href="@{/users/prenomlist}">User qui fait partie de la list "Maria", "Thomas", "Marcel /users/prenomlist</a></li>
+            <li><a th:href="@{/users/emailtri/gmail.com}">User dont le mail fini par gmail.com (trié) /users/email/gmail.com</a></li> 
+        </ul>
+        <h4>ModelAttribute</h4>
+        <div class="alert alert-warning col-md-6" th:text="${datejour}"> </div>
+         <div class="alert alert-secondary col-md-6" th:text="${per1}"> </div>
+    </div>
+</body>
+</html>

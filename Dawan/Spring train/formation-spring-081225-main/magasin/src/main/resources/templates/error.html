@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+ th:replace="~{main-layout.html::main-fragment(~{::title},~{::#error-main-content})}"
+>
+<head>
+<meta charset="UTF-8">
+<title>Erreur Personalisé</title>
+</head>
+<body>
+    <div class="container-fluid" id="error-main-content">
+        <div class="display-1 text-center my-5 text-primary">Erreur Personalisé</div>
+    </div>
+</body>
+</html>

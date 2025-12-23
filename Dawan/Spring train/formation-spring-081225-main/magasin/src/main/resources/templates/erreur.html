@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+ th:replace="~{main-layout.html::main-fragment(~{::title},~{::#erreur-main-content})}"
+>
+<head>
+<meta charset="UTF-8">
+<title th:text="|Erreur ${codeStatus}|">Erreur</title>
+</head>
+<body>
+    <div class="container-fluid" id="erreur-main-content">
+        <div class="display-1 text-center my-5 text-primary"
+            th:text="${codeStatus}"></div>
+        <div class="h2 my-5 text-center" th:text="${msgErr}"></div> 
+    </div>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+        th:replace="~{main-layout::main-fragment(~{::title},~{::#users-main-content})}">
+<head>
+<meta charset="UTF-8">
+<title>Gestion des utilisateurs</title>
+</head>
+<body>
+    <div class="container-fluid" id="users-main-content">
+        <h2 class="my-4">Gestion des utilisateurs</h2>
+        <a class="btn btn-primary btn-sm mb-2" th:href="@{/admin/users/add}">Ajouter Utilisateur</a>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Prénom</th>
+                    <th>Nom</th>
+                    <th>Date de Naissance</th>
+                    <th>Email</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="u : ${utilisateurs}">
+                    <td th:text="${u.prenom}"></td>
+                    <td th:text="${u.nom}"></td>
+                    <td th:text="${#temporals.format(u.dateNaissance, 'dd MMMM yyyy')}"></td>
+                    <td th:text="${u.email}"></td>
+                    <td>
+                        <a class="btn btn-danger btn-sm" th:href="@{/admin/users/delete/{id}(id=${u.id})}">Supprimer</a>
+                        <a class="btn btn-success btn-sm" href="#">Modifier</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

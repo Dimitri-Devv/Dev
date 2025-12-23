@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="main-fragment(titre,maincontent)">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.8/css/bootstrap.min.css}"/>
+<title th:replace="${titre}">Formation Spring</title>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top mb-2">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Formation Spring</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+   <div class="collapse navbar-collapse" id="navbarText">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link " th:href="@{/hello}">Hello world</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link " th:href="@{/exemple}">Exemple</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link " th:href="@{/exemple/testthymeleaf}">Thymeleaf</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link " th:href="@{/admin/users}">Utilisateurs</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link " th:href="@{/presentation}">Présentation</a>
+        </ul>
+    </div>
+  </div>
+</nav>
+<main class="container-fluid">
+    <div th:replace="${maincontent}?:~{}"></div>
+    <footer>
+        <hr/>
+        <p class="text-center small">Formation Spring - Dawan - Décembre 2025</p> 
+    </footer>
+</main>
+<script th:src=@{/webjars/bootstrap/5.3.8/js/bootstrap.bundle.min.js}></script>
+</body>
+</html>

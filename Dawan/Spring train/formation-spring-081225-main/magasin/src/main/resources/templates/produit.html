@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+        th:replace="~{main-layout::main-fragment(~{::title},~{::#produits-main-content})}">
+<head>
+<meta charset="UTF-8">
+<title>Affichages des produits</title>
+</head>
+<body>
+    <div class="container-fluid" id="produits-main-content">
+        <h2 class="my-4">Affichages des produits</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Nom</th>
+                    <th>Prix</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="p : ${produits}">
+                    <td th:text="${p.id}"></td>
+                    <td th:text="${p.nom}"></td>
+                    <td th:text="${p.prix}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
